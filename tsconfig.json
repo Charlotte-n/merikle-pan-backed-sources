@@ -16,6 +16,21 @@
     "noImplicitAny": false,
     "strictBindCallApply": false,
     "forceConsistentCasingInFileNames": false,
-    "noFallthroughCasesInSwitch": false
+    "noFallthroughCasesInSwitch": false,
+    "esModuleInterop": true,
+    "paths": {
+      "@libs/db": [
+        "libs/db/src"
+      ],
+      "@libs/db/*": [
+        "libs/db/src/*"
+      ],
+      "@Libs/redis": [
+        "libs/redis/src"
+      ],
+      "@Libs/redis/*": [
+        "libs/redis/src/*"
+      ]
+    }
   }
 }
