@@ -4,7 +4,11 @@
   "sourceRoot": "src",
   "compilerOptions": {
     "deleteOutDir": true,
-    "webpack": true
+    "webpack": true,
+    "assets": [
+      "**/*.env"
+    ],
+    "WatchAssets": true
   },
   "generateOptions": {
     "spec":false
