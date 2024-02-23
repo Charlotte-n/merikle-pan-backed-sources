@@ -10,7 +10,6 @@ import {
   HttpStatus,
   Inject,
   Query,
-  UseInterceptors,
 } from '@nestjs/common';
 import { LoginRegisterService } from './login-register.service';
 import {
@@ -22,9 +21,9 @@ import {
 import { RedisService } from '@Libs/redis';
 import { EmailSendService } from '../email-send/email-send.service';
 import { JwtService } from '@nestjs/jwt';
-import { ResponseInterfator } from '../response-interfator.interface';
 import { PostPasswordDto } from './dto/post-password.dto';
 import * as svgCaptcha from 'svg-captcha';
+import { md5 } from '../utils';
 
 @Controller('lr')
 export class LoginRegisterController {
@@ -38,39 +37,47 @@ export class LoginRegisterController {
   @Inject(JwtService)
   private jwtService: JwtService;
 
+  @Post('qq_login')
+  qqLogin() {}
+
   /**
-   * 登录
+   * 邮箱登录
    * @param body
    * @param respon
    */
-  @UseInterceptors(ResponseInterfator)
   @Post('login')
   async login(@Body() body: PostLogin, @Res({ passthrough: true }) respon) {
-    const { result, isEmail } = await this.loginRegisterService.login(body);
+    const { result } = await this.loginRegisterService.login(body);
+    const { password } = body;
     try {
-      if (result && isEmail) {
-        //登录成功，将token放在请求头上
-        const token = await this.jwtService.signAsync({
-          id: result._id,
-          nick_name: result.nick_name,
-        });
-        respon.setHeader('token', JSON.stringify(token));
-        return {
-          data: {
-            _id: result._id,
-            email: result.email,
-            qq_open_id: result.qq_open_id,
+      if (result) {
+        console.log(
+          md5(password) === result.password,
+          password,
+          result.password,
+        );
+        if (md5(password) === result.password) {
+          const token = await this.jwtService.signAsync({
+            id: result._id,
             nick_name: result.nick_name,
-            create_time: result.create_time,
-          },
-          message: '登录成功',
-          code: 0,
-        };
-      } else if (isEmail) {
-        if (!result) {
+          });
+          respon.setHeader('token', JSON.stringify(token));
+          return {
+            data: {
+              _id: result._id,
+              email: result.email,
+              qq_open_id: result.qq_open_id,
+              nick_name: result.nick_name,
+              create_time: result.create_time,
+              token: token,
+            },
+            message: '登录成功',
+            code: 0,
+          };
+        } else {
           return {
             message: '密码输错了',
-            code: 0,
+            code: 1,
           };
         }
       } else {
@@ -105,14 +112,21 @@ export class LoginRegisterController {
   @Get('register-code')
   async generateRegisterCode(@Query() address: string) {
     const code = Math.random().toString().slice(2, 8);
-    //设置缓存
-    await this.redisService.set(`code_${address}`, code, 5 * 60);
-    await this.emailService.sendMail({
-      to: address,
-      subject: 'merikle网盘注册验证码',
-      html: `<p>你的注册验证码是 ${code}</p>`,
-    });
-    return this.loginRegisterService.generateCode();
+    try {
+      //设置缓存
+      await this.redisService.set(`verify_code`, code, 5 * 60);
+      await this.emailService.sendMail({
+        to: address,
+        subject: 'merikle网盘注册验证码',
+        html: `<p>你的注册验证码是 ${code}</p>`,
+      });
+      return this.loginRegisterService.generateCode();
+    } catch (e) {
+      return {
+        code: 1,
+        message: '发送失败，邮箱不正确',
+      };
+    }
   }
 
   /**
@@ -122,7 +136,7 @@ export class LoginRegisterController {
   @Post('verifyCode')
   async verifyCode(@Body() body: PostCode) {
     //获取缓存里面的验证码
-    const code = await this.redisService.get(`code_${body.code}`);
+    const code = await this.redisService.get('verify_code');
     if (!code) {
       return this.loginRegisterService.verifyCode({
         data: '',
@@ -159,7 +173,7 @@ export class LoginRegisterController {
         message: '验证失效',
       });
     }
-    if (captcha !== myCaptcha || !captcha) {
+    if (captcha.toLowerCase() !== myCaptcha.toLowerCase() || !captcha) {
       return this.loginRegisterService.verifyCaptcha({
         data: '',
         code: 1,
@@ -187,11 +201,11 @@ export class LoginRegisterController {
           size: 4, //生成几个验证码
           fontSize: 50, //文字大小
           width: 100, //宽度
-          height: 34, //高度
+          height: 40, //高度
           background: '#cc9966', //背景颜色
         });
         // 将验证码文本存储在会话或数据库中，以便后续验证，准备存入redis
-        this.redisService.set('captcha', captcha.text, 60);
+        this.redisService.set('captcha', captcha.text);
         res.set('Content-Type', 'image/svg+xml');
         res.send(captcha.data);
     }

@@ -1,3 +1,4 @@
+//封装接受的参数的
 import { IsEmail, IsNotEmpty, MinLength } from 'class-validator';
 
 /**
@@ -11,6 +12,8 @@ export class PostCaptcha {
 }
 
 export class PostCode {
+  @IsEmail()
+  email: string;
   code: string;
 }
 
@@ -27,10 +30,12 @@ export class PostLogin {
   email: string;
   @IsNotEmpty({ message: '密码不能为空' })
   password: string;
+  is_remember: number;
 }
 export interface PostLoginType {
   email: string;
   password: string;
+  is_remember: number;
 }
 
 /**

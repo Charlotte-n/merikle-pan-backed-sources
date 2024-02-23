@@ -9,6 +9,7 @@ import {
   PostRegistervType,
 } from './dto/post-login-register.dto';
 import { PostPasswordDtoType } from './dto/post-password.dto';
+import { md5 } from '../utils';
 
 @Injectable()
 export class LoginRegisterService {
@@ -23,12 +24,12 @@ export class LoginRegisterService {
    * @param body
    */
   async login(body: PostLoginType) {
-    const { email, password } = body;
-    const isEmail = await this.User.findOne({ email });
-    const result = await this.User.findOne({ email, password });
+    const { email, is_remember } = body;
+    const result = await this.User.findOne({ email });
+    await this.User.updateOne({ email: email }, { is_remember });
+
     return {
       result,
-      isEmail,
     };
   }
 
@@ -43,7 +44,7 @@ export class LoginRegisterService {
         await this.User.create({
           email,
           nick_name,
-          password,
+          password: md5(password),
           qq_open_id: 0,
           create_time: new Date(),
         });
@@ -106,5 +107,9 @@ export class LoginRegisterService {
   verifyCode(value: ResponsePrams) {
     const { data, code, message } = value;
     return { data, code, message };
+  }
+
+  updateIsNumber(email: string, updateValue) {
+    this.User.updateOne({ email: email }, { is_remember: updateValue });
   }
 }

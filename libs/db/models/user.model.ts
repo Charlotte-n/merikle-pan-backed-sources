@@ -43,6 +43,8 @@ export class User {
 
   @Prop()
   assess_Token: string;
+  @Prop()
+  is_remember: number; //0为记住，1为记不住
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);

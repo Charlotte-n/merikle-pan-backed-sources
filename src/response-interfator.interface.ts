@@ -18,7 +18,7 @@ export class ResponseInterfator<T> implements NestInterceptor<T, Response<T>> {
     console.log(context.getClass());
     return next.handle().pipe(
       map((value: any) => {
-        if (!value.code) {
+        if (!value?.code) {
           return value;
         }
         return {
