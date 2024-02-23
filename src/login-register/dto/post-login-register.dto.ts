@@ -1,5 +1,8 @@
 import { IsEmail, IsNotEmpty, MinLength } from 'class-validator';
 
+/**
+ * 验证码
+ */
 export class PostCaptcha {
   @MinLength(4, {
     message: '验证码不能少于4位',
@@ -10,6 +13,10 @@ export class PostCaptcha {
 export class PostCode {
   code: string;
 }
+
+/**
+ * 登录
+ */
 export class PostLogin {
   @IsEmail(
     {},
@@ -20,17 +27,15 @@ export class PostLogin {
   email: string;
   @IsNotEmpty({ message: '密码不能为空' })
   password: string;
-  @MinLength(4, {
-    message: '验证码不能少于4位',
-  })
-  captcha: string;
 }
 export interface PostLoginType {
   email: string;
   password: string;
-  captcha: string;
 }
 
+/**
+ * 注册
+ */
 export class PostRegisterv {
   @IsEmail(
     {},
@@ -39,7 +44,6 @@ export class PostRegisterv {
     },
   )
   email: string;
-  captcha: string;
   @IsNotEmpty({
     message: '用户名不能为空',
   })
@@ -51,19 +55,12 @@ export class PostRegisterv {
   @IsNotEmpty({
     message: '第二次密码不能为空',
   })
-  twicepassword: string;
-  code: string;
-  qq_open_id: number;
+  twicePassword: string;
 }
 
 export interface PostRegistervType {
   email: string;
-  captcha: string;
   nick_name: string;
   password: string;
-  twicepassword: string;
-  code: string;
-  qq_open_id: number;
+  twicePassword: string;
 }
-
-export class PostRegister {}

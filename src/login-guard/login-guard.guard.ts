@@ -16,10 +16,20 @@ export class LoginGuardGuard implements CanActivate {
     context: ExecutionContext,
   ): boolean | Promise<boolean> | Observable<boolean> {
     //白名单
-    const whiteList = ['/lr/login', '/lr/register'];
+    const whiteList = [
+      '/lr/login',
+      '/lr/register',
+      '/lr/reset-password',
+      '/lr/captcha',
+      '/lr/verifyCaptcha',
+      '/lr/register-code',
+      '/lr/verifyCode',
+      '/lr/:id',
+    ];
     //简单的检验了下token
     const request = context.switchToHttp().getRequest();
     const path = context.switchToHttp().getRequest().route.path;
+    console.log(path);
     if (whiteList.includes(path)) {
       return true;
     }

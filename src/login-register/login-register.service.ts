@@ -1,6 +1,4 @@
 import { HttpException, HttpStatus, Inject, Injectable } from '@nestjs/common';
-import { CreateLoginRegisterDto } from './dto/create-login-register.dto';
-import * as svgCaptcha from 'svg-captcha';
 import { RedisService } from '@Libs/redis';
 import { ResponsePrams } from '../common';
 import { InjectModel } from '@nestjs/mongoose';
@@ -10,6 +8,7 @@ import {
   PostLoginType,
   PostRegistervType,
 } from './dto/post-login-register.dto';
+import { PostPasswordDtoType } from './dto/post-password.dto';
 
 @Injectable()
 export class LoginRegisterService {
@@ -18,10 +17,6 @@ export class LoginRegisterService {
   //导入User模型
   @InjectModel(User.name)
   private readonly User: Model<User>;
-
-  create(createLoginRegisterDto: CreateLoginRegisterDto) {
-    return 'This action adds a new loginRegister';
-  }
 
   /**
    * 登录
@@ -42,9 +37,9 @@ export class LoginRegisterService {
    * @param body
    */
   async register(body: PostRegistervType) {
-    const { email, nick_name, password, code, captcha } = body;
+    const { email, nick_name, password } = body;
     try {
-      if (email && nick_name && password && captcha && code) {
+      if (email && nick_name && password) {
         await this.User.create({
           email,
           nick_name,
@@ -69,6 +64,28 @@ export class LoginRegisterService {
     }
   }
 
+  /**
+   * 重置密码
+   */
+  async resetPassword(body: PostPasswordDtoType) {
+    const { email, password } = body;
+    //寻找email
+    const res = await this.User.findOne({ email });
+    if (!res) {
+      throw new HttpException('没有该用户', HttpStatus.BAD_REQUEST);
+    } else {
+      try {
+        await this.User.updateOne({ email }, { password });
+        return {
+          message: '修改成功',
+          code: 0,
+        };
+      } catch (e) {
+        throw new HttpException(e, HttpStatus.FAILED_DEPENDENCY);
+      }
+    }
+  }
+
   generateCode() {
     return {
       data: '',
@@ -77,36 +94,10 @@ export class LoginRegisterService {
     };
   }
 
-  findAll() {
-    return `This action returns all loginRegister`;
-  }
-
   findOne(id: number) {
     return `This action returns a #${id} loginRegister`;
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} loginRegister`;
-  }
-
-  /**
-   * 生成验证码
-   * @param res
-   */
-  generateImageCode(res: any) {
-    const captcha = svgCaptcha.create({
-      //可配置返回的图片信息
-      size: 4, //生成几个验证码
-      fontSize: 50, //文字大小
-      width: 100, //宽度
-      height: 34, //高度
-      background: '#cc9966', //背景颜色
-    });
-    // 将验证码文本存储在会话或数据库中，以便后续验证，准备存入redis
-    this.redisService.set('captcha', captcha.text, 60);
-    res.set('Content-Type', 'image/svg+xml');
-    res.send(captcha.data);
-  }
   verifyCaptcha(value: ResponsePrams) {
     const { data, code, message } = value;
     return { data, code, message };

@@ -5,9 +5,7 @@ import {
   Body,
   Patch,
   Param,
-  Delete,
   Res,
-  Req,
   HttpException,
   HttpStatus,
   Inject,
@@ -15,8 +13,6 @@ import {
   UseInterceptors,
 } from '@nestjs/common';
 import { LoginRegisterService } from './login-register.service';
-import { CreateLoginRegisterDto } from './dto/create-login-register.dto';
-import { UpdateLoginRegisterDto } from './dto/update-login-register.dto';
 import {
   PostCaptcha,
   PostCode,
@@ -27,7 +23,8 @@ import { RedisService } from '@Libs/redis';
 import { EmailSendService } from '../email-send/email-send.service';
 import { JwtService } from '@nestjs/jwt';
 import { ResponseInterfator } from '../response-interfator.interface';
-import { ConfigService } from '@nestjs/config';
+import { PostPasswordDto } from './dto/post-password.dto';
+import * as svgCaptcha from 'svg-captcha';
 
 @Controller('lr')
 export class LoginRegisterController {
@@ -40,11 +37,6 @@ export class LoginRegisterController {
   //注入JWT
   @Inject(JwtService)
   private jwtService: JwtService;
-
-  @Post()
-  create(@Body() createLoginRegisterDto: CreateLoginRegisterDto) {
-    return this.loginRegisterService.create(createLoginRegisterDto);
-  }
 
   /**
    * 登录
@@ -69,6 +61,7 @@ export class LoginRegisterController {
             email: result.email,
             qq_open_id: result.qq_open_id,
             nick_name: result.nick_name,
+            create_time: result.create_time,
           },
           message: '登录成功',
           code: 0,
@@ -98,6 +91,11 @@ export class LoginRegisterController {
   @Post('register')
   register(@Body() body: PostRegisterv) {
     return this.loginRegisterService.register(body);
+  }
+
+  @Patch('reset-password')
+  resetPassword(@Body() body: PostPasswordDto) {
+    return this.loginRegisterService.resetPassword(body);
   }
 
   /**
@@ -171,24 +169,31 @@ export class LoginRegisterController {
     return this.loginRegisterService.verifyCaptcha({
       data: '',
       code: 0,
-      message: '请求成功',
+      message: '验证成功',
     });
   }
-  @Get()
-  findAll() {
-    return this.loginRegisterService.findAll();
-  }
+
+  /**
+   * 生成验证码
+   * @param id
+   * @param res
+   */
   @Get(':id')
-  findOne(@Param('id') id: string, @Res() res) {
+  findOne(@Param('id') id: string, @Res({ passthrough: true }) res) {
     switch (id) {
       case 'captcha':
-        return this.loginRegisterService.generateImageCode(res);
+        const captcha = svgCaptcha.create({
+          //可配置返回的图片信息
+          size: 4, //生成几个验证码
+          fontSize: 50, //文字大小
+          width: 100, //宽度
+          height: 34, //高度
+          background: '#cc9966', //背景颜色
+        });
+        // 将验证码文本存储在会话或数据库中，以便后续验证，准备存入redis
+        this.redisService.set('captcha', captcha.text, 60);
+        res.set('Content-Type', 'image/svg+xml');
+        res.send(captcha.data);
     }
-    return this.loginRegisterService.findOne(+id);
-  }
-
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.loginRegisterService.remove(+id);
   }
 }
