@@ -47,6 +47,7 @@ export class LoginRegisterService {
           password: md5(password),
           qq_open_id: 0,
           create_time: new Date(),
+          totalSpace: 10,
         });
         return {
           data: '',
@@ -76,7 +77,7 @@ export class LoginRegisterService {
       throw new HttpException('没有该用户', HttpStatus.BAD_REQUEST);
     } else {
       try {
-        await this.User.updateOne({ email }, { password });
+        await this.User.updateOne({ email }, { password: md5(password) });
         return {
           message: '修改成功',
           code: 0,

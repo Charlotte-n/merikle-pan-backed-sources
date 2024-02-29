@@ -70,6 +70,9 @@ export class LoginRegisterController {
               nick_name: result.nick_name,
               create_time: result.create_time,
               token: token,
+              password: result.password,
+              is_remember: result.is_remember,
+              avatar: result.qq_avatar,
             },
             message: '登录成功',
             code: 0,
@@ -100,6 +103,10 @@ export class LoginRegisterController {
     return this.loginRegisterService.register(body);
   }
 
+  /**
+   * 重置密码
+   * @param body
+   */
   @Patch('reset-password')
   resetPassword(@Body() body: PostPasswordDto) {
     return this.loginRegisterService.resetPassword(body);

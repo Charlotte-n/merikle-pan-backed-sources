@@ -3,8 +3,10 @@ import { DbService } from './db.service';
 import 'reflect-metadata';
 import { MongooseModule } from '@nestjs/mongoose';
 import { User, UserSchema } from '../models/user.model';
+import { FileSchema, File } from '../models/file_info.model';
 const models = MongooseModule.forFeature([
   { name: User.name, schema: UserSchema },
+  { name: File.name, schema: FileSchema },
 ]);
 
 @Global()

@@ -4,7 +4,7 @@ import { UpdateUserDto } from './dto/update-user.dto';
 import { InjectModel } from '@nestjs/mongoose';
 import { User } from '../../libs/db/models/user.model';
 import { Model } from 'mongoose';
-import { onErrorResumeNextWith } from 'rxjs';
+import { ObjectId } from 'mongodb';
 
 @Injectable()
 export class UserService {
@@ -22,6 +22,22 @@ export class UserService {
 
   async findUserInfo(userId: string) {
     try {
+      const _id = userId.trim();
+      return await this.User.findOne({
+        _id: _id,
+      });
+    } catch (e) {
+      throw new HttpException(e, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+  }
+
+  async getSpace(userId: string, fileSize: number) {
+    try {
+      await this.User.updateOne(
+        { _id: userId },
+        { $inc: { useSpace: fileSize } },
+        { upsert: true },
+      );
       return await this.User.findOne({ _id: userId });
     } catch (e) {
       throw new HttpException(e, HttpStatus.INTERNAL_SERVER_ERROR);
@@ -39,14 +55,16 @@ export class UserService {
     return `This action updates a #${id} user`;
   }
 
-  async uploadAvatar(userId: string, file: any) {
-    console.log(file.path);
-    const avatar = file.path;
-    try {
-      return await this.User.updateOne({ _id: userId }, { qq_avatar: avatar });
-    } catch (e) {
-      throw new HttpException(e, HttpStatus.INTERNAL_SERVER_ERROR);
-    }
+  async uploadAvatar(userId: any, file: Express.Multer.File) {
+    console.log(file);
+    const avatar = file.filename;
+    console.log(userId);
+    const res = await this.User.updateOne(
+      { _id: userId },
+      { qq_avatar: avatar },
+    );
+    console.log(res);
+    return res;
   }
 
   remove(id: number) {

@@ -9,6 +9,9 @@ import {
   Query,
   UseInterceptors,
   UploadedFile,
+  Res,
+  HttpException,
+  HttpStatus,
 } from '@nestjs/common';
 import { UserService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
@@ -31,6 +34,8 @@ export class UserController {
   @Get('info')
   async findUserInfo(@Query('userId') userId: string) {
     const result = await this.userService.findUserInfo(userId);
+    console.log(userId);
+    console.log(result);
     return {
       data: {
         _id: result._id,
@@ -44,11 +49,26 @@ export class UserController {
       code: 0,
     };
   }
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.userService.findOne(+id);
-  }
 
+  /**
+   * 获取用户可用空间
+   * @param userId
+   * @param fileSize
+   * @param res
+   */
+  @Get('space')
+  async getSpace(
+    @Param() userId: string,
+    @Param() fileSize: number,
+    @Res({ passthrough: true }) res: any,
+  ) {
+    const result = await this.userService.getSpace(userId, fileSize);
+    return {
+      data: result.useSpace,
+      message: '成功',
+      code: 0,
+    };
+  }
   @UseInterceptors(
     FileInterceptor('file', {
       dest: 'public/uploaded',
@@ -56,10 +76,16 @@ export class UserController {
   )
   @Patch('upload/avatar')
   async uploadAvatar(
-    @UploadedFile() file: any,
+    @UploadedFile() file: Express.Multer.File,
     @Query('userId') userId: string,
   ) {
     //保存到数据库里面
+    if (!userId) {
+      throw new HttpException(
+        '没有上传userId,更新失败',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
     const res = await this.userService.uploadAvatar(userId, file);
     if (res) {
       return { message: '上传成功', code: 0 };

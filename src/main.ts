@@ -5,9 +5,10 @@ import { ValidationPipe } from '@nestjs/common';
 import { FilterGloablFilter } from './filter-gloabl.filter';
 import { ResponseInterfator } from './response-interfator.interface';
 import { ConfigService } from '@nestjs/config';
+import { NestExpressApplication } from '@nestjs/platform-express';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
+  const app = await NestFactory.create<NestExpressApplication>(AppModule);
   app.enableCors({
     origin: true,
     methods: 'GET,PUT,POST,PATCH,DELETE',

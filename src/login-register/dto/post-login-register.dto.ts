@@ -1,13 +1,10 @@
 //封装接受的参数的
-import { IsEmail, IsNotEmpty, MinLength } from 'class-validator';
+import { IsEmail, IsNotEmpty } from 'class-validator';
 
 /**
  * 验证码
  */
 export class PostCaptcha {
-  @MinLength(4, {
-    message: '验证码不能少于4位',
-  })
   captcha: string;
 }
 

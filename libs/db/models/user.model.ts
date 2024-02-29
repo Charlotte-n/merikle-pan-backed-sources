@@ -39,7 +39,10 @@ export class User {
   isAdmin: number; //0为普通用户，1为管理员
 
   @Prop()
-  useSpace: number; //使用的空间多大
+  useSpace: number; //使用的空间多大，以字节作为单位
+
+  @Prop()
+  totalSpace: number; //用户分配的总共的空间，以GB作为单位
 
   @Prop()
   assess_Token: string;

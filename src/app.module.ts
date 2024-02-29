@@ -14,6 +14,8 @@ import { MulterModule } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
 import { extname, join } from 'path';
 import { ServeStaticModule } from '@nestjs/serve-static';
+import { PagationService } from './pagation/pagation.service';
+import { FileModule } from './file/file.module';
 
 @Module({
   imports: [
@@ -42,22 +44,11 @@ import { ServeStaticModule } from '@nestjs/serve-static';
       inject: [ConfigService],
     }),
     ServeStaticModule.forRoot({
-      rootPath: join(__dirname, '..', 'public/public'),
+      rootPath: join(__dirname, '..', 'public/uploaded'),
       serveRoot: '/static',
     }),
-    //上传文件
-    MulterModule.register({
-      // 用于配置上传，这部分也可以写在路由上
-      storage: diskStorage({
-        destination: join('./public/uploaded'),
-        filename: (_, file, callback) => {
-          const fileName = `${
-            new Date().getTime() + extname(file.originalname)
-          }`;
-          return callback(null, fileName);
-        },
-      }),
-    }),
+
+    FileModule,
   ],
   controllers: [AppController],
   providers: [
@@ -66,6 +57,7 @@ import { ServeStaticModule } from '@nestjs/serve-static';
       provide: APP_GUARD,
       useClass: LoginGuardGuard,
     },
+    PagationService,
   ],
 })
 export class AppModule {}
