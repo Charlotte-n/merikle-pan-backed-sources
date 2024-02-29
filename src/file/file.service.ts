@@ -37,7 +37,7 @@ export class FileService {
       startPos += fs.statSync(filePath).size;
     });
     return {
-      data: '',
+      data: ' 2abd43c4a364fab87a06a7f1291d985e',
       message: '合并成功',
       code: 0,
     };
@@ -82,8 +82,10 @@ export class FileService {
     let res = Array(Number(totalCount))
       .fill(0)
       .map((_, index) => index);
+    let message = '';
+    let code = 0;
     try {
-      //读取文件状态,秒传
+      //读取文件状态,秒传,读取有没有该文件
       fs.statSync(filePath);
       //读取成功，秒传
       return { data: [], message: '上传成功', code: 0 };
@@ -94,18 +96,22 @@ export class FileService {
         fs.readdir(dirPath, async (error, files) => {
           if (error) {
             //都需要上传
-            return { data: res, message: '转码失败', code: 2 };
+            message = '转码失败';
+            code = 2;
           }
           //读取文件,如果这些分片少于总的分片说明没有上传全，继续返回需要上传的文件,将需要上传的文件名称返回回去
           if (files.length < totalCount) {
             res = res.filter((index) => {
-              return !files.includes(`chunk-${index}`);
+              return !files.includes(filename + '-' + index);
             });
-            return { data: res, message: '转码中', code: 1 };
+            message = '继续上传';
+            code = 1;
           } else {
             //没有进行合并，进行一下合并
             this.mergeFile(fileHash, name);
-            return { data: [], message: '合并成功' };
+            res = [];
+            message = '合并成功';
+            code = 0;
           }
         });
       } catch (e) {
@@ -116,6 +122,11 @@ export class FileService {
         };
       }
     }
+    return {
+      data: res,
+      message: message,
+      code: code,
+    };
   }
 
   /**
@@ -162,17 +173,17 @@ export class FileService {
           //成功创建了目录的话就写入文件
           fs.cpSync(chunk.path, chunkPath);
           fs.rmSync(chunkPath);
-          return {
-            data: '',
-            code: 0,
-            message: '上传切片成功',
-          };
         });
       }
     } catch (e) {
-      console.log(e);
+      throw new HttpException(e, HttpStatus.BAD_REQUEST);
       //解释这里出现了错误
     }
+    return {
+      data: '',
+      code: 0,
+      message: '上传成功',
+    };
   }
 
   findAll(value: { page: number; pageSize: number }) {

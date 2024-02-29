@@ -64,15 +64,18 @@ export class FileController {
     @Query('fileHash') fileHash: string,
     @Query('totalCount') totalCount: number,
     @Query('filename') filename: string,
+    @Res({ passthrough: true }) res: any,
   ) {
     console.log(fileSize, user_id, filename, totalCount, fileHash);
-    return await this.fileService.verifyExit(
+    const result = await this.fileService.verifyExit(
       fileSize,
       user_id,
       fileHash,
       totalCount,
       filename,
     );
+    console.log(result);
+    return result;
   }
 
   @Get('merge')
