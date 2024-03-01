@@ -7,7 +7,7 @@ export type FileDocument = HydratedDocument<File>;
 
 @Schema()
 export class File {
-  @Prop({ unique: true })
+  @Prop()
   file_id: string;
   @Prop()
   file_md5: string; //MD5
@@ -37,6 +37,8 @@ export class File {
   del_time: string; //进入回收站时间
   @Prop()
   del_flag: number; //删除标记，0：为删除，1为回收站，2为正常
+  @Prop({ type: mongoose.Types.ObjectId, ref: 'User' })
+  user: mongoose.Types.ObjectId;
 }
 
 export const FileSchema = SchemaFactory.createForClass(File);

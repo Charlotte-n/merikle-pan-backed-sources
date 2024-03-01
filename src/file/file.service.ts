@@ -4,6 +4,7 @@ import { File } from '../../libs/db/models/file_info.model';
 import { Model } from 'mongoose';
 import fs from 'fs';
 import { User } from '../../libs/db/models/user.model';
+import { ObjectId } from 'mongodb';
 
 @Injectable()
 export class FileService {
@@ -17,9 +18,15 @@ export class FileService {
    * 合并文件
    * @param fileHash
    * @param filename
+   * @param fileSize
+   * @param user_id
    */
-  async mergeFile(fileHash: string, filename: string, fileSize: number) {
-    console.log(fileHash);
+  async mergeFile(
+    fileHash: string,
+    filename: string,
+    fileSize: number,
+    user_id: string,
+  ) {
     const dirPath = 'upload/chunks' + '_' + fileHash; //存放的chunk的目录
     const files = fs.readdirSync(dirPath);
     let startPos = 0;
@@ -34,6 +41,7 @@ export class FileService {
       startPos += fs.statSync(filePath).size;
     });
     try {
+      const id = await this.getUserId(user_id);
       //将文件的数据插入到file里面
       await this.File.create({
         file_name: filename,
@@ -42,7 +50,16 @@ export class FileService {
         file_size: fileSize,
         file_md5: fileHash,
         create_time: new Date().getTime(),
+        user: id,
       });
+      //获取用户的space
+      let useSpace = await this.getUseSpace(user_id);
+      useSpace = useSpace ? useSpace : 0;
+      //更新数据
+      await this.User.updateOne(
+        { _id: user_id },
+        { useSpace: useSpace + fileSize },
+      );
     } catch (e) {
       return {
         message: '已经创建了该文件不能重复创建',
@@ -53,6 +70,14 @@ export class FileService {
       message: '合并成功',
       code: 0,
     };
+  }
+  async getUserId(user_id: string) {
+    const user = await this.User.findOne({ _id: user_id });
+    return user._id;
+  }
+  async getUseSpace(user_id: string) {
+    const user = await this.User.findOne({ _id: user_id });
+    return user.useSpace;
   }
 
   /**
@@ -73,16 +98,16 @@ export class FileService {
     const dirPath = 'upload/chunks' + '_' + fileHash; //存放的chunk的目录
     const filePath = dirPath + '/' + filename; //存放chunk的地址,这个filename前端要进行修改生成有hash值且有索引的名字
     const reg = /(.+)\-\d+$/;
-    const name = filename.match(reg)[0];
+    const name = filename.match(reg)[1];
     //判断文件的大小
-    const result = await this.User.findOne({
+    const user = await this.User.findOne({
       _id: user_id,
     });
-    const totalSpace = 1024 * result.totalSpace;
+    const totalSpace = 1024 * user.totalSpace;
     const useSpace =
-      result.useSpace === undefined || null
+      user.useSpace === undefined || null
         ? 0
-        : result.useSpace * Math.pow(10, -6);
+        : user.useSpace * Math.pow(10, -6);
     if (!(Number(fileSize) * Math.pow(10, -6) + useSpace < totalSpace)) {
       return {
         data: '',
@@ -99,8 +124,31 @@ export class FileService {
     try {
       //读取文件状态,秒传,读取有没有该文件
       fs.statSync(filePath);
-      //读取成功，秒传
-      return { data: [], message: '秒传', code: 0 };
+      res = [];
+      message = '秒传';
+      code = 0;
+      //更新数据库
+      await this.File.create({
+        create_time: new Date().getTime(),
+        file_size: fileSize,
+        file_md5: fileHash,
+        file_id: fileHash,
+        file_name: name,
+        file_path: filePath,
+        user: user._id,
+      });
+      await this.File.findOne({
+        file_id: fileHash,
+      }).populate('user');
+      //获取用户的useSpace
+      let useSpace = await this.getUseSpace(user_id);
+      useSpace = useSpace ? useSpace : 0;
+      //然后修改useSpace
+      const update = await this.User.updateOne(
+        { _id: user_id },
+        { useSpace: fileSize + useSpace },
+      );
+      console.log(update);
     } catch (e) {
       //文件不存在,文件夹存在
       try {
@@ -121,7 +169,7 @@ export class FileService {
           } else {
             //没有进行合并，进行一下合并
             console.log(fileHash);
-            await this.mergeFile(fileHash, name, fileSize);
+            await this.mergeFile(fileHash, name, fileSize, user_id);
             res = [];
             message = '合并成功';
             code = 0;

@@ -113,8 +113,8 @@ export class FileController {
 
   @Post('merge')
   mergeFile(@Body() body: mergeParam) {
-    const { fileHash, filename, fileSize } = body;
-    return this.fileService.mergeFile(fileHash, filename, fileSize);
+    const { fileHash, filename, fileSize, user_id } = body;
+    return this.fileService.mergeFile(fileHash, filename, fileSize, user_id);
   }
   /**
    * 获取文件列表

@@ -26,4 +26,5 @@ export class mergeParam {
   filename: string;
   @IsNotEmpty()
   fileSize: number;
+  user_id: string;
 }
