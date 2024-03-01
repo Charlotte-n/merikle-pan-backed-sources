@@ -2,29 +2,31 @@ import {
   Controller,
   Get,
   Post,
-  Body,
   Param,
   Delete,
   UseInterceptors,
   UploadedFile,
   Res,
   Query,
+  Body,
 } from '@nestjs/common';
 import { FileService } from './file.service';
-import { CreateFileDto } from './dto/create-file.dto';
-import { UploadFileDto } from './dto/update-file.dto';
 import { Pagation } from '../pagation/pagation.decorator';
 import { FileInterceptor } from '@nestjs/platform-express';
+import { AddFileOrFolderDto, mergeParam } from './dto/post-file.dto';
 
 @Controller('file')
 export class FileController {
   constructor(private readonly fileService: FileService) {}
 
-  @Post()
-  create(@Body() createFileDto: CreateFileDto) {
-    return this.fileService.create(createFileDto);
-  }
-
+  /**
+   * 上传切片
+   * @param file
+   * @param filename
+   * @param fileHash
+   * @param chunkIndex
+   * @param res
+   */
   @Post('upload/chunk')
   @UseInterceptors(
     FileInterceptor('file', {
@@ -78,17 +80,52 @@ export class FileController {
     return result;
   }
 
-  @Get('merge')
-  mergeFile(fileHash: string, filename: string) {
-    this.fileService.mergeFile(fileHash, filename);
+  /**
+   * 增加文件夹
+   * @param body
+   * @param res
+   */
+  @Post('addNewFolder')
+  async addNewFolderOrFile(
+    @Body() body: AddFileOrFolderDto,
+    @Res({ passthrough: true }) res: any,
+  ) {
+    //新建目录
+    const { fileId, filePid, filename } = body;
+    return await this.fileService.addNewFolderOrFile(fileId, filePid, filename);
+  }
+
+  /**
+   * 删除文件夹
+   * @param body
+   * @param res
+   */
+  @Post('deleteFolder')
+  async deleteFolder(
+    @Body() body: AddFileOrFolderDto,
+    @Res({ passthrough: true }) res: any,
+  ) {
+    const { fileId, filePid, filename } = body;
+    return await this.fileService.deleteFolder(fileId, filePid, filename);
+  }
+  @Post('rename')
+  async Rename() {}
+
+  @Post('merge')
+  mergeFile(@Body() body: mergeParam) {
+    const { fileHash, filename, fileSize } = body;
+    return this.fileService.mergeFile(fileHash, filename, fileSize);
   }
   /**
    * 获取文件列表
    */
   @Get('list')
-  findAll(@Pagation() pagation: { page: number; pageSize: number }) {
+  async findAll(
+    @Pagation() pagation: { page: number; pageSize: number },
+    @Res({ passthrough: true }) res: any,
+  ) {
     //进行分页查询
-    this.fileService.findAll(pagation);
+    return await this.fileService.findAll(pagation);
   }
 
   @Get(':id')

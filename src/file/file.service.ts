@@ -1,5 +1,4 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
-import { CreateFileDto } from './dto/create-file.dto';
 import { InjectModel } from '@nestjs/mongoose';
 import { File } from '../../libs/db/models/file_info.model';
 import { Model } from 'mongoose';
@@ -13,16 +12,14 @@ export class FileService {
 
   @InjectModel(User.name)
   private User: Model<User>;
-  create(createFileDto: CreateFileDto) {
-    return 'This action adds a new file';
-  }
 
   /**
    * 合并文件
    * @param fileHash
    * @param filename
    */
-  mergeFile(fileHash: string, filename: string) {
+  async mergeFile(fileHash: string, filename: string, fileSize: number) {
+    console.log(fileHash);
     const dirPath = 'upload/chunks' + '_' + fileHash; //存放的chunk的目录
     const files = fs.readdirSync(dirPath);
     let startPos = 0;
@@ -36,8 +33,23 @@ export class FileService {
       );
       startPos += fs.statSync(filePath).size;
     });
+    try {
+      //将文件的数据插入到file里面
+      await this.File.create({
+        file_name: filename,
+        file_path: dirPath + '/' + filename,
+        file_id: fileHash + new Date().getSeconds(),
+        file_size: fileSize,
+        file_md5: fileHash,
+        create_time: new Date().getTime(),
+      });
+    } catch (e) {
+      return {
+        message: '已经创建了该文件不能重复创建',
+        code: 1,
+      };
+    }
     return {
-      data: ' 2abd43c4a364fab87a06a7f1291d985e',
       message: '合并成功',
       code: 0,
     };
@@ -88,7 +100,7 @@ export class FileService {
       //读取文件状态,秒传,读取有没有该文件
       fs.statSync(filePath);
       //读取成功，秒传
-      return { data: [], message: '上传成功', code: 0 };
+      return { data: [], message: '秒传', code: 0 };
     } catch (e) {
       //文件不存在,文件夹存在
       try {
@@ -108,7 +120,8 @@ export class FileService {
             code = 1;
           } else {
             //没有进行合并，进行一下合并
-            this.mergeFile(fileHash, name);
+            console.log(fileHash);
+            await this.mergeFile(fileHash, name, fileSize);
             res = [];
             message = '合并成功';
             code = 0;
@@ -125,7 +138,7 @@ export class FileService {
     return {
       data: res,
       message: message,
-      code: code,
+      code: code, //0为秒传，1为上传成功，2为
     };
   }
 
@@ -186,16 +199,66 @@ export class FileService {
     };
   }
 
-  findAll(value: { page: number; pageSize: number }) {
+  async findAll(value: { page: number; pageSize: number }) {
     const { page, pageSize } = value;
     //进行文件查询
     try {
-      const res = this.File.find()
+      const res = await this.File.find()
         .skip((page - 1) * pageSize)
         .limit(pageSize);
-      return res;
+      return {
+        data: res,
+        message: '获取成功',
+        code: 0,
+      };
     } catch (err) {
       throw new HttpException(err, HttpStatus.BAD_REQUEST);
+    }
+  }
+
+  /**
+   * 创建目录
+   * @param fileId
+   * @param filePid
+   * @param filename
+   */
+  async addNewFolderOrFile(fileId: string, filePid: string, filename: string) {
+    try {
+      await this.File.create({
+        file_name: filename,
+        file_id: fileId,
+        file_pid: filePid,
+      });
+      return {
+        data: '',
+        message: '创建成功',
+        code: 0,
+      };
+    } catch (e) {
+      console.log(e);
+      throw new HttpException('已经创建了该文件', HttpStatus.OK);
+    }
+  }
+
+  /**
+   * 删除文件夹
+   * @param fileId
+   * @param filePid
+   * @param filename
+   */
+  async deleteFolder(fileId: string, filePid: string, filename: string) {
+    try {
+      await this.File.deleteOne({
+        file_id: fileId,
+        file_pid: filePid,
+        file_name: filename,
+      });
+      return {
+        message: '删除成功',
+        code: 0,
+      };
+    } catch (e) {
+      new HttpException('删除成功', HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
 
