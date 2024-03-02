@@ -26,7 +26,7 @@ export class File {
   @Prop()
   last_update_time: string; //文件更新时间
   @Prop()
-  folder_type: string; //0为文件，1为目录
+  folder_type: number; //0为文件，1为目录
   @Prop()
   file_category: number; //1为视频，2为音频，3为图片，4为文档，5为其他
   @Prop()

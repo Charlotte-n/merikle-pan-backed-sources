@@ -37,7 +37,7 @@ import { FileModule } from './file/file.module';
         return {
           secret: configService.get('jwt_secret'),
           signOptions: {
-            expiresIn: '30m', // 默认 30 分钟
+            expiresIn: '60m', // 默认 30 分钟
           },
         };
       },
@@ -46,6 +46,10 @@ import { FileModule } from './file/file.module';
     ServeStaticModule.forRoot({
       rootPath: join(__dirname, '..', 'public/uploaded'),
       serveRoot: '/static',
+    }),
+    ServeStaticModule.forRoot({
+      rootPath: join(__dirname, '..', 'upload'),
+      serveRoot: '/statics',
     }),
 
     FileModule,

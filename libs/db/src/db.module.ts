@@ -13,7 +13,8 @@ const models = MongooseModule.forFeature([
 @Module({
   imports: [
     MongooseModule.forRoot(
-      'mongodb://admin:admin@localhost:27017/pan?authSource=admin',
+      // 'mongodb://admin:admin@localhost:27017/pan?authSource=admin',
+      'mongodb://127.0.0.1:27017/pan?authSource=admin',
     ),
     models,
   ],

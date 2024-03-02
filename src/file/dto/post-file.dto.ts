@@ -7,12 +7,13 @@ export interface AddFileOrFolderDtoType {
 }
 
 export class AddFileOrFolderDto {
-  @IsNotEmpty()
   fileId: string;
   @IsNotEmpty()
   filePid: string;
+  @IsNotEmpty({ message: '文件夹不能为空' })
+  name: string;
   @IsNotEmpty()
-  filename: string;
+  user_id: string;
 }
 
 export class RenameDto {
@@ -27,4 +28,5 @@ export class mergeParam {
   @IsNotEmpty()
   fileSize: number;
   user_id: string;
+  file_type: string;
 }

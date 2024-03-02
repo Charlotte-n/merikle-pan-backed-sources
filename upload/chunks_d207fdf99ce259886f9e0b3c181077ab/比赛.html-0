@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title></title>
+			<style>
+				.mao{
+					text-decoration: none;
+					color: #678;
+				}
+				.no-style{
+					text-decoration: none !important;
+				}
+			</style>
+	</head>
+	<body>
+		<div style=" width: 20%; height: 60%; margin: 0 auto;" ><img src="./流浪.png" alt=""  width="100%" ></div>
+		<table style="margin: 0 auto" cellpadding="15">
+			<tr>
+				<td><a href="#i1" class="mao" style=";">首页</a></td>
+				<td><a href="#i2" class="mao" >关于我们</a></td>
+				<td><a href="#i3" class="mao">我们的工作</a></td>
+				<td><a href="#i4" class="mao">知识中心</a></td>
+				<td><a href="#i5" class="mao">照片墙</a></td>
+				<td><a href="#i6" class="mao">视频</a></td>
+			     <td><a href="#i7" class="mao">领养流程</a></td>
+			     <td><a href="#i8" class="mao" class="no-style">联系我们</a></td>
+		 </tr>
+		</table>
+		<img src="./cat2.png" alt="" width="100%" id="i1">
+		<h1 style="text-align: center;" id="i2"><strong>关于我们<hr></strong></h1>
+		<div style="width: 80%; margin: 0 auto;">
+			<p style="text-indent: 2em; color: #555; line-height: 1.6; font-size: 22px">流浪猫狗救助协会，成立于2008年，是一个致力于流浪猫狗救助、领养、文明宣传的非盈利性社会团体我们自成立以来，遵照市农业局、民政局的指导思想，在遵守宪法、法律、法规和国家政策的前提下，尊重生命、保护动物、维护动物的生存权利，保障它们的健康与福利，减少杀戮、虐待、残害、遗弃动物的行为，并通过教育引导正确科学对待伴侣动物的观念，达到人与动物和谐共处的愿景。</p>
+		<img src="./huli.jpg" alt="" width="100%">
+</div><br><br><br>
+<p style="text-align: center; font-size: 32px;" id="i3"><strong>我们的工作<hr></strong></p>
+<table style="margin: 0 auto;">
+	<tr>
+		<td><img src="./铃铛.png" alt="" width="302px" height="125px"></td>
+		<td><ul><h2>收养流浪猫狗</h2>
+		<li style="color: #555;">我们的工作人员会定时去各个地方查看流浪猫狗的<br>存在，只要我们发现了都会带回到我们的协会中心<br>收养。</li>
+		</ul>
+		</td>
+	</tr>
+	<tr>
+		<td>
+			<ul><h2>健康的保障</h2></ul>
+			<li style="color: #555;">收养进来的流浪猫狗，我们会先帮助它们基本的<br>驱虫，然后为它们检查是否有疾病，并保障它们良<br>好的身体健康。</li>
+		</td>
+		<td><img src="./健康.png" alt="" width="302px" height="125px"></td>
+	</tr>
+	<tr>
+		<td><img src="./家.png" alt="" width="302px" height="125px
+		"></td>
+		<td><h2><ul>帮助找新家</ul></h2>
+		<li style="color: #555;">我们会给健康的流浪猫狗，找到适合它们的新家<br>庭，领养人我们会经过严格的筛选，达到我们的条<br>件才能成功的领养。</li></td>
+	</tr>
+</table><br><br><br><br>
+<p style="text-align: center; font-size: 32px;" id="i4"><strong>知识中心<hr></strong></p> 
+<div style="width: 735px; height: 34.5px;text-align:right;"><a href="./2.html" target="_blank" style="color: #555; text-decoration: none; font-size: 30px; " >猫咪狗狗有些小病小痛第一时间该怎么办</a></div>
+				<div style="color: #f15a29; text-align: right;" >2017年4月19日</div>
+		<div style="width:1028px ; height: 120px; text-align: left; margin: 0 auto; color: #50555c;">关于猫咪： 1.猫咪发生呕吐的时候怎么办？首先要看猫咪是因为什么症状而发生这种情况的，吐毛球？肠胃不适？吃错东西？ 要看猫咪吐出的是什么，如果是毛球那就不需要大惊小怪，给猫咪买一些化毛膏之类的混在猫粮吃就可以，或者有化毛成分的猫粮，如果猫咪是吃错东西或者肠胃不适引起的可以禁食（包括水）不要心疼！24小时看看猫咪还会不会发生呕吐，然后再喂一些流质的食物（比如猫粮混点水泡软了）如果猫咪持续发生呕吐这个时候就可以带去医院了。 2.猫咪拉肚子怎么办？ 首先看猫咪拉的是血水、拉稀还是拉虫 血水很可能是尿毒症、这个是非常重要的事情！楼主其中一只猫咪就因为这个问题没处理好所以。。。。去天堂了...</div>
+<div style="width: 435px; height: 34.5px;text-align: right;"><a href="./3.html" style="color: #555; text-decoration: none; font-size: 30px; ">关于狗狗的常见病</a></div>
+<div style="color: #f15a29; text-align: right;">2017年4月19日</div>
+<div style="width:1028px ; height: 120px; text-align: left; margin: 0 auto; color: #50555c;">关于狗狗耳朵的护理 可卡——可卡的耳病问题一直以来在全世界所有品种的犬中排行靠前。因此从小养成清洗耳道的习惯对于可卡的耳道疾病预防至关重要。 关于可卡，我有一点需要强调，那就是它的耳朵问题。可卡很皮实，但是唯独耳病问题一直以来在全世界所有品种的犬中排行靠前。可以说这相当于形成了它的品种病。它的耳廓长，吃东西喝水的时候容易搭拉到饭盆内，长期下来容易使耳尖骚痒、病变。同时由于耳道不透气，容易滋生细菌、真菌等病原，致使耳道发炎，耳垢腺发炎，耳道增生，耳道皮肤化脓，甚至发展至中耳炎和内耳炎。在很多病例由于不注意清洗耳朵，在短短的2个月时间内双侧耳道就能因为外耳道皮肤增生而发生完全堵塞。因此从...</div>
+<div style="width: 645px; height: 34.5px;text-align:right;"><a href="" style="color: #555; text-decoration: none; font-size: 30px; ">如何帮宝贝们养成良好的生活习惯</div>
+<div style="color: #f15a29; text-align: right; font-size: 17px;">2016年6月19日</div>
+<div style="width:1028px ; height: 120px; text-align: left; margin: 0 auto; color: #50555c; font-size: 17px">自从我当了宠物医生以后身边总是有很多朋友问我很多关于养狗的问题， 比如为什么家里狗狗挑食， 为什么就是不听话，怎么在家里随地大小便，很多很多诸如此类的问题。 其实我想说狗狗就和小孩子一样，需要非常多的耐心甚至比养一个小孩还多的耐心去教会他们如何按照你所要求的方式生活。 很多家长会有很强烈的母系情节，会很溺爱我们的宝贝，不舍得说不舍教育，或者忙于生活，忙于学业只要平时宝贝们不太出格也就放任自流。 那今天小编就在这里为大家简单说一下如何帮宝贝们养成良好的生活习惯。 首先饮食， 一般来说狗狗不需要像人一样一日三餐，大部分的狗狗一天只需一顿到两顿就好， 按照狗狗的重量和大小每袋食物上都有...</div>
+<p style="text-align: center; font-size: 32px; color: black;" id="i5"><strong>照片墙</strong><hr></p>
+<img src="./cat3.jpg" alt="" width="225px" height="240px">
+<img src="./cat4.jpg" alt="" width="225px" height="240px">
+<img src="./cat5.jpg" alt="" width="225px" height="240px">
+<img src="./cat6.jpg" alt="" width="225px" height="240px">
+<img src="./cat7.jpg" alt="" width="225px" height="240px">
+<img src="./cat8.jpg" alt="" width="225px" height="240px">
+<img src="./dog1.jpg" alt="" width="225px" height="240px">
+<img src="./dog2.jpg" alt="" width="225px" height="240px">
+<img src="./dog3.jpg" alt="" width="225px" height="240px">
+<img src="./dog4.jpg" alt="" width="225px" height="240px">
+<img src="./dog5.jpg" alt="" width="225px" height="240px">
+<img src="./dog6.jpg" alt="" width="225px" height="240px"><br><br><br>
+<p style="text-align: center; font-size: 32px; color: black;" id="i6"><strong>视频<hr></strong></p>
+		
+		<video src="./01e229a8e363a5ce018370037f72bd3fad_259.mp4
+		" controls width="100%" height="700px"></video>
+		<video src="./01e2e4f56c3dbac801037003824e5fadcd_259.mp4" controls width="700px" height="700px"></video><video src="./354427c21b411b3107abffe473652de65d275aea_r.mp4" controls width="700px" height="700px"></video>
+		<img src="./不爱请别伤害.jpeg" alt="" width="100%" height="800px" style="padding: 0%;">
+		<h1 style="text-align: center; color: black; font-size: 32px;" id="i7"><strong>领养流程</strong></h1><hr>
+		<div style="color:#555 ; width: 1000px; height: 27px; font-size: 20px; text-align: right;">我们会对领养人的能力严格审查，以给它们一个健康安全的成长环境。</div><br>
+		<div style="width: 1056px; height: 224.983; margin: 0 auto;">
+			<img src="./房子 .png" alt="" width="236px" height="107.983">
+			<img src="./栅栏.png" alt="" width="236px" height="107.983">
+			<img src="./药水.png" alt="" width="236px" height="107.983">
+			<img src="./笼子.png" alt="" width="236px" height="107.983">
+		</div>
+		<table style="margin: 0 auto; " cellpadding="4">
+			<tr>
+			<td style="width: 236px; height: 102; font-size: 20px; color: #50555c;"> 领养人须年满22岁，有稳定的工作稳定的收入和住房（不符条件：未满22岁/学生/合租/店铺不建议领养）</td>
+			
+			<td style="width: 236px; height: 102; font-size: 20px; color: #50555c;"> 领养人要爱护看护好动物，家里有防护栏防护。领养宠物须在一年内完成绝育和接受固定10次回访。</td>
+			<td style="width: 236px; height: 102; font-size: 20px; color: #50555c;">领养动物须在一年之内完成动物绝育（请及时把绝育时的照片以及医院票据发给回访人员，以便登记）</td>
+			<td  style="width: 236px; height: 102; font-size: 20px; color: #50555c;">领养人不得因为任何理由遗弃或私下转送领养宠物，为方便回访管理，领养人勿私下将领养猫带离主城。</td>
+			</tr>
+		</table><br><br>
+		<p style="text-align: center; font-size: 32px; color: black; " id="i8" class="no-style"><strong>联系我们</strong><hr></p>
+		<table style="margin: 0 auto;">
+		<tr>
+		<td><input type="text" value="姓名" width="380px" height="47.5px"></td>
+		
+		</tr>
+		<tr>
+			<td><input type="text" value="邮箱"></td>
+		</tr>
+		
+		<tr>
+			<td><input type="text" value="账号"></td>
+		</tr>
+		<tr>
+			<td><input type="password" value=""></td>
+		</tr>
+		<tr>
+			<td><textarea name="留言" id="" cols="30" rows="10" >留言</textarea></td>
+		</tr>
+		<tr>
+			<td><input type="submit" value="提交" ></td>
+		</tr>
+		</table>
+	<script>document.write('<script src="//' + (location.host || 'localhost').split(':')[0] + ':35929/livereload.js?snipver=1"></' + 'script>')</script><script>document.addEventListener('LiveReloadDisconnect', function() { setTimeout(function() { window.location.reload(); }, 500); })</script></body>
+</html>				
+			
+			
+	
+			

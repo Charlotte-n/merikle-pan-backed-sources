@@ -66,6 +66,7 @@ export class FileController {
     @Query('fileHash') fileHash: string,
     @Query('totalCount') totalCount: number,
     @Query('filename') filename: string,
+    @Query('file_type') file_type: string,
     @Res({ passthrough: true }) res: any,
   ) {
     console.log(fileSize, user_id, filename, totalCount, fileHash);
@@ -75,6 +76,7 @@ export class FileController {
       fileHash,
       totalCount,
       filename,
+      file_type,
     );
     console.log(result);
     return result;
@@ -91,8 +93,14 @@ export class FileController {
     @Res({ passthrough: true }) res: any,
   ) {
     //新建目录
-    const { fileId, filePid, filename } = body;
-    return await this.fileService.addNewFolderOrFile(fileId, filePid, filename);
+    const { fileId, filePid, name, user_id } = body;
+    console.log(user_id);
+    return await this.fileService.addNewFolderOrFile(
+      fileId,
+      filePid,
+      name,
+      user_id,
+    );
   }
 
   /**
@@ -105,16 +113,22 @@ export class FileController {
     @Body() body: AddFileOrFolderDto,
     @Res({ passthrough: true }) res: any,
   ) {
-    const { fileId, filePid, filename } = body;
-    return await this.fileService.deleteFolder(fileId, filePid, filename);
+    const { fileId, filePid, name } = body;
+    return await this.fileService.deleteFolder(fileId, filePid, name);
   }
   @Post('rename')
   async Rename() {}
 
   @Post('merge')
   mergeFile(@Body() body: mergeParam) {
-    const { fileHash, filename, fileSize, user_id } = body;
-    return this.fileService.mergeFile(fileHash, filename, fileSize, user_id);
+    const { fileHash, filename, fileSize, user_id, file_type } = body;
+    return this.fileService.mergeFile(
+      fileHash,
+      filename,
+      fileSize,
+      user_id,
+      file_type,
+    );
   }
   /**
    * 获取文件列表
@@ -127,7 +141,6 @@ export class FileController {
     //进行分页查询
     return await this.fileService.findAll(pagation);
   }
-
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.fileService.findOne(+id);

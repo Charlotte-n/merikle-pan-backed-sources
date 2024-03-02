@@ -4,7 +4,6 @@ import { File } from '../../libs/db/models/file_info.model';
 import { Model } from 'mongoose';
 import fs from 'fs';
 import { User } from '../../libs/db/models/user.model';
-import { ObjectId } from 'mongodb';
 
 @Injectable()
 export class FileService {
@@ -14,18 +13,40 @@ export class FileService {
   @InjectModel(User.name)
   private User: Model<User>;
 
+  getFileType(value: string) {
+    const category = [
+      'folder',
+      'video',
+      'music',
+      'image',
+      'pdf',
+      'word',
+      'excel',
+      'txt',
+      'code',
+      'zip',
+      'others',
+    ];
+    for (let i = 0; i < category.length; i++) {
+      if (value.includes(category[i])) {
+        return i;
+      }
+    }
+  }
   /**
    * 合并文件
    * @param fileHash
    * @param filename
    * @param fileSize
    * @param user_id
+   * @param file_type
    */
   async mergeFile(
     fileHash: string,
     filename: string,
     fileSize: number,
     user_id: string,
+    file_type: string,
   ) {
     const dirPath = 'upload/chunks' + '_' + fileHash; //存放的chunk的目录
     const files = fs.readdirSync(dirPath);
@@ -45,11 +66,13 @@ export class FileService {
       //将文件的数据插入到file里面
       await this.File.create({
         file_name: filename,
-        file_path: dirPath + '/' + filename,
+        file_path: filename,
         file_id: fileHash + new Date().getSeconds(),
-        file_size: fileSize,
+        file_size: this.getDanWei(Number(fileSize)),
         file_md5: fileHash,
         create_time: new Date().getTime(),
+        file_type: this.getFileType(file_type),
+        folder_type: 0,
         user: id,
       });
       //获取用户的space
@@ -58,7 +81,7 @@ export class FileService {
       //更新数据
       await this.User.updateOne(
         { _id: user_id },
-        { useSpace: useSpace + fileSize },
+        { useSpace: useSpace + this.getDanWei(Number(fileSize)) },
       );
     } catch (e) {
       return {
@@ -80,6 +103,9 @@ export class FileService {
     return user.useSpace;
   }
 
+  getDanWei(fileSize: number) {
+    return Number(fileSize / Math.pow(2, 30));
+  }
   /**
    * 判断文件状态和是否可以进行秒传、断点上传，总而言之就是判断此时文件上传的状态
    * @param fileSize
@@ -87,6 +113,7 @@ export class FileService {
    * @param fileHash
    * @param totalCount
    * @param filename
+   * @param file_type
    */
   async verifyExit(
     fileSize: number,
@@ -94,6 +121,7 @@ export class FileService {
     fileHash: string,
     totalCount: number,
     filename: string,
+    file_type: string,
   ) {
     const dirPath = 'upload/chunks' + '_' + fileHash; //存放的chunk的目录
     const filePath = dirPath + '/' + filename; //存放chunk的地址,这个filename前端要进行修改生成有hash值且有索引的名字
@@ -103,12 +131,9 @@ export class FileService {
     const user = await this.User.findOne({
       _id: user_id,
     });
-    const totalSpace = 1024 * user.totalSpace;
-    const useSpace =
-      user.useSpace === undefined || null
-        ? 0
-        : user.useSpace * Math.pow(10, -6);
-    if (!(Number(fileSize) * Math.pow(10, -6) + useSpace < totalSpace)) {
+    const totalSpace = user.totalSpace;
+    const useSpace = user.useSpace === undefined || null ? 0 : user.useSpace;
+    if (!(this.getDanWei(Number(fileSize)) + useSpace < totalSpace)) {
       return {
         data: '',
         message: '剩余的内存不够',
@@ -130,11 +155,13 @@ export class FileService {
       //更新数据库
       await this.File.create({
         create_time: new Date().getTime(),
-        file_size: fileSize,
+        file_size: this.getDanWei(Number(fileSize)),
         file_md5: fileHash,
         file_id: fileHash,
         file_name: name,
         file_path: filePath,
+        file_type: this.getFileType(file_type),
+        folder_type: 0,
         user: user._id,
       });
       await this.File.findOne({
@@ -144,11 +171,10 @@ export class FileService {
       let useSpace = await this.getUseSpace(user_id);
       useSpace = useSpace ? useSpace : 0;
       //然后修改useSpace
-      const update = await this.User.updateOne(
+      await this.User.updateOne(
         { _id: user_id },
-        { useSpace: fileSize + useSpace },
+        { useSpace: this.getDanWei(Number(fileSize)) + useSpace },
       );
-      console.log(update);
     } catch (e) {
       //文件不存在,文件夹存在
       try {
@@ -168,8 +194,7 @@ export class FileService {
             code = 1;
           } else {
             //没有进行合并，进行一下合并
-            console.log(fileHash);
-            await this.mergeFile(fileHash, name, fileSize, user_id);
+            await this.mergeFile(fileHash, name, fileSize, user_id, file_type);
             res = [];
             message = '合并成功';
             code = 0;
@@ -247,6 +272,10 @@ export class FileService {
     };
   }
 
+  /**
+   * 文件列表
+   * @param value
+   */
   async findAll(value: { page: number; pageSize: number }) {
     const { page, pageSize } = value;
     //进行文件查询
@@ -264,18 +293,28 @@ export class FileService {
     }
   }
 
+  async getFile_cover() {}
   /**
    * 创建目录
    * @param fileId
    * @param filePid
    * @param filename
+   * @param user_id
    */
-  async addNewFolderOrFile(fileId: string, filePid: string, filename: string) {
+  async addNewFolderOrFile(
+    fileId: string,
+    filePid: string,
+    filename: string,
+    user_id: string,
+  ) {
     try {
       await this.File.create({
         file_name: filename,
         file_id: fileId,
         file_pid: filePid,
+        create_time: new Date().getTime(),
+        folder_type: 1,
+        user: await this.getUserId(user_id),
       });
       return {
         data: '',
