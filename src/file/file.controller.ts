@@ -14,6 +14,7 @@ import { FileService } from './file.service';
 import { Pagation } from '../pagation/pagation.decorator';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { AddFileOrFolderDto, mergeParam } from './dto/post-file.dto';
+import { RenameFileDto } from './dto/rename-file.dto';
 
 @Controller('file')
 export class FileController {
@@ -57,6 +58,8 @@ export class FileController {
    * @param fileHash
    * @param totalCount //分为几块
    * @param filename
+   * @param file_type
+   * @param res
    */
 
   @Get('upload/isExit')
@@ -117,8 +120,15 @@ export class FileController {
     return await this.fileService.deleteFolder(fileId, filePid, name);
   }
   @Post('rename')
-  async Rename() {}
+  async Rename(@Body() body: RenameFileDto) {
+    const { filename, _id } = body;
+    return await this.fileService.renameFile(filename, _id);
+  }
 
+  /**
+   * 合并文件夹
+   * @param body
+   */
   @Post('merge')
   mergeFile(@Body() body: mergeParam) {
     const { fileHash, filename, fileSize, user_id, file_type } = body;
@@ -130,6 +140,16 @@ export class FileController {
       file_type,
     );
   }
+
+  /**
+   * 获取图片
+   * @param _id
+   */
+  @Get('image')
+  async getImage(@Query('_id') _id: string) {
+    return await this.fileService.getImage(_id);
+  }
+
   /**
    * 获取文件列表
    */

@@ -66,7 +66,7 @@ export class FileService {
       //将文件的数据插入到file里面
       await this.File.create({
         file_name: filename,
-        file_path: filename,
+        file_path: 'upload/' + filename,
         file_id: fileHash + new Date().getSeconds(),
         file_size: this.getDanWei(Number(fileSize)),
         file_md5: fileHash,
@@ -74,6 +74,7 @@ export class FileService {
         file_type: this.getFileType(file_type),
         folder_type: 0,
         user: id,
+        file_cover: filename,
       });
       //获取用户的space
       let useSpace = await this.getUseSpace(user_id);
@@ -271,6 +272,16 @@ export class FileService {
       message: '上传成功',
     };
   }
+  async getImage(_id: string) {
+    const res = await this.File.findOne({ _id });
+    return {
+      code: 0,
+      data: {
+        image: res.file_path,
+      },
+      message: '成功',
+    };
+  }
 
   /**
    * 文件列表
@@ -293,7 +304,6 @@ export class FileService {
     }
   }
 
-  async getFile_cover() {}
   /**
    * 创建目录
    * @param fileId
@@ -324,6 +334,18 @@ export class FileService {
     } catch (e) {
       console.log(e);
       throw new HttpException('已经创建了该文件', HttpStatus.OK);
+    }
+  }
+
+  async renameFile(filename: string, _id: string) {
+    try {
+      await this.File.updateOne({ _id }, { file_name: filename });
+      return {
+        message: '重命名成功',
+        code: 0,
+      };
+    } catch (e) {
+      return new HttpException(e, HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
 
