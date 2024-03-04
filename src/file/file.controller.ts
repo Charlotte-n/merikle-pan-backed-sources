@@ -15,6 +15,7 @@ import { Pagation } from '../pagation/pagation.decorator';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { AddFileOrFolderDto, mergeParam } from './dto/post-file.dto';
 import { RenameFileDto } from './dto/rename-file.dto';
+import { DeleteFileorFolderDto } from './dto/delete-file.dto';
 
 @Controller('file')
 export class FileController {
@@ -107,17 +108,17 @@ export class FileController {
   }
 
   /**
-   * 删除文件夹
+   * 删除文件
    * @param body
    * @param res
    */
   @Post('deleteFolder')
   async deleteFolder(
-    @Body() body: AddFileOrFolderDto,
+    @Body() body: DeleteFileorFolderDto,
     @Res({ passthrough: true }) res: any,
   ) {
-    const { fileId, filePid, name } = body;
-    return await this.fileService.deleteFolder(fileId, filePid, name);
+    const { fileId, filePid, filename } = body;
+    return await this.fileService.deleteFolder(fileId, filePid, filename);
   }
   @Post('rename')
   async Rename(@Body() body: RenameFileDto) {

@@ -28,6 +28,9 @@ export class FileService {
       'others',
     ];
     for (let i = 0; i < category.length; i++) {
+      if (!value) {
+        return 10;
+      }
       if (value.includes(category[i])) {
         return i;
       }
@@ -75,6 +78,7 @@ export class FileService {
         folder_type: 0,
         user: id,
         file_cover: filename,
+        del_flag: 0,
       });
       //获取用户的space
       let useSpace = await this.getUseSpace(user_id);
@@ -154,7 +158,7 @@ export class FileService {
       message = '秒传';
       code = 0;
       //更新数据库
-      await this.File.create({
+      const result = await this.File.create({
         create_time: new Date().getTime(),
         file_size: this.getDanWei(Number(fileSize)),
         file_md5: fileHash,
@@ -164,7 +168,10 @@ export class FileService {
         file_type: this.getFileType(file_type),
         folder_type: 0,
         user: user._id,
+        del_flag: 0,
+        file_cover: name,
       });
+      console.log(result);
       await this.File.findOne({
         file_id: fileHash,
       }).populate('user');
@@ -178,6 +185,7 @@ export class FileService {
       );
     } catch (e) {
       //文件不存在,文件夹存在
+      console.log(e);
       try {
         fs.statSync(dirPath);
         fs.readdir(dirPath, async (error, files) => {
@@ -291,7 +299,7 @@ export class FileService {
     const { page, pageSize } = value;
     //进行文件查询
     try {
-      const res = await this.File.find()
+      const res = await this.File.find({ del_flag: 0 })
         .skip((page - 1) * pageSize)
         .limit(pageSize);
       return {
@@ -354,14 +362,16 @@ export class FileService {
    * @param fileId
    * @param filePid
    * @param filename
+   * @param user_id
    */
   async deleteFolder(fileId: string, filePid: string, filename: string) {
     try {
-      await this.File.deleteOne({
-        file_id: fileId,
-        file_pid: filePid,
-        file_name: filename,
-      });
+      await this.File.updateOne(
+        {
+          _id: fileId,
+        },
+        { del_flag: 1 },
+      );
       return {
         message: '删除成功',
         code: 0,
