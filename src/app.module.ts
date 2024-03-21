@@ -16,6 +16,7 @@ import { extname, join } from 'path';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { PagationService } from './pagation/pagation.service';
 import { FileModule } from './file/file.module';
+import { DirectoryModule } from './directory/directory.module';
 
 @Module({
   imports: [
@@ -53,6 +54,8 @@ import { FileModule } from './file/file.module';
     }),
 
     FileModule,
+
+    DirectoryModule,
   ],
   controllers: [AppController],
   providers: [

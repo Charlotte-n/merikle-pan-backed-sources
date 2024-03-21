@@ -6,7 +6,6 @@ import {
   Delete,
   UseInterceptors,
   UploadedFile,
-  Res,
   Query,
   Body,
 } from '@nestjs/common';
@@ -15,7 +14,10 @@ import { Pagation } from '../pagation/pagation.decorator';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { AddFileOrFolderDto, mergeParam } from './dto/post-file.dto';
 import { RenameFileDto } from './dto/rename-file.dto';
-import { DeleteFileorFolderDto } from './dto/delete-file.dto';
+import {
+  DeleteFileorFolderDto,
+  MultipleDeleteDto,
+} from './dto/delete-file.dto';
 
 @Controller('file')
 export class FileController {
@@ -27,7 +29,6 @@ export class FileController {
    * @param filename
    * @param fileHash
    * @param chunkIndex
-   * @param res
    */
   @Post('upload/chunk')
   @UseInterceptors(
@@ -40,8 +41,6 @@ export class FileController {
     @Query('filename') filename: string,
     @Query('fileHash') fileHash: string,
     @Query('chunkIndex') chunkIndex: number,
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    @Res({ passthrough: true }) res: any,
   ) {
     console.log(file, '我是文件', filename, fileHash, chunkIndex);
     return await this.fileService.uploadChunk(
@@ -60,7 +59,7 @@ export class FileController {
    * @param totalCount //分为几块
    * @param filename
    * @param file_type
-   * @param res
+   * @param filePid
    */
 
   @Get('upload/isExit')
@@ -71,7 +70,7 @@ export class FileController {
     @Query('totalCount') totalCount: number,
     @Query('filename') filename: string,
     @Query('file_type') file_type: string,
-    @Res({ passthrough: true }) res: any,
+    @Query('filePid') filePid: string | number,
   ) {
     console.log(fileSize, user_id, filename, totalCount, fileHash);
     const result = await this.fileService.verifyExit(
@@ -81,6 +80,7 @@ export class FileController {
       totalCount,
       filename,
       file_type,
+      filePid,
     );
     console.log(result);
     return result;
@@ -89,13 +89,9 @@ export class FileController {
   /**
    * 增加文件夹
    * @param body
-   * @param res
    */
   @Post('addNewFolder')
-  async addNewFolderOrFile(
-    @Body() body: AddFileOrFolderDto,
-    @Res({ passthrough: true }) res: any,
-  ) {
+  async addNewFolderOrFile(@Body() body: AddFileOrFolderDto) {
     //新建目录
     const { fileId, filePid, name, user_id } = body;
     console.log(user_id);
@@ -110,16 +106,28 @@ export class FileController {
   /**
    * 删除文件
    * @param body
-   * @param res
    */
   @Post('deleteFolder')
-  async deleteFolder(
-    @Body() body: DeleteFileorFolderDto,
-    @Res({ passthrough: true }) res: any,
-  ) {
-    const { fileId, filePid, filename } = body;
-    return await this.fileService.deleteFolder(fileId, filePid, filename);
+  async deleteFolder(@Body() body: DeleteFileorFolderDto) {
+    const { fileId } = body;
+    return await this.fileService.deleteFolder(fileId);
   }
+
+  /**
+   * 批量删除
+   * @param body
+   */
+  @Post('multipleDelete')
+  async multipleDelete(@Body() body: MultipleDeleteDto) {
+    const { ids } = body;
+    return await this.fileService.multipleDelete(ids);
+  }
+
+  /**
+   * 重命名
+   * @param body
+   * @constructor
+   */
   @Post('rename')
   async Rename(@Body() body: RenameFileDto) {
     const { filename, _id } = body;
@@ -132,13 +140,14 @@ export class FileController {
    */
   @Post('merge')
   mergeFile(@Body() body: mergeParam) {
-    const { fileHash, filename, fileSize, user_id, file_type } = body;
+    const { fileHash, filename, fileSize, user_id, file_type, filePid } = body;
     return this.fileService.mergeFile(
       fileHash,
       filename,
       fileSize,
       user_id,
       file_type,
+      filePid,
     );
   }
 
@@ -157,10 +166,21 @@ export class FileController {
   @Get('list')
   async findAll(
     @Pagation() pagation: { page: number; pageSize: number },
-    @Res({ passthrough: true }) res: any,
+    @Query('fileType') fileType: number,
+    @Query('fileId') fileId: string,
+    @Query('title') title?: string,
   ) {
-    //进行分页查询
-    return await this.fileService.findAll(pagation);
+    //进行分页查询x
+    return await this.fileService.findAll(pagation, fileType, fileId, title);
+  }
+
+  /**
+   * 获取文件信息
+   * @param id
+   */
+  @Get('fileInfo')
+  async findFileInfo(@Query() id: string) {
+    return await this.fileService.findFileInfo(id);
   }
   @Get(':id')
   findOne(@Param('id') id: string) {

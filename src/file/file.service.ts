@@ -43,6 +43,7 @@ export class FileService {
    * @param fileSize
    * @param user_id
    * @param file_type
+   * @param filePid
    */
   async mergeFile(
     fileHash: string,
@@ -50,6 +51,7 @@ export class FileService {
     fileSize: number,
     user_id: string,
     file_type: string,
+    filePid: string | number,
   ) {
     const dirPath = 'upload/chunks' + '_' + fileHash; //存放的chunk的目录
     const files = fs.readdirSync(dirPath);
@@ -79,6 +81,7 @@ export class FileService {
         user: id,
         file_cover: filename,
         del_flag: 0,
+        file_pid: filePid,
       });
       //获取用户的space
       let useSpace = await this.getUseSpace(user_id);
@@ -119,6 +122,7 @@ export class FileService {
    * @param totalCount
    * @param filename
    * @param file_type
+   * @param filePid
    */
   async verifyExit(
     fileSize: number,
@@ -127,6 +131,7 @@ export class FileService {
     totalCount: number,
     filename: string,
     file_type: string,
+    filePid: string | number,
   ) {
     const dirPath = 'upload/chunks' + '_' + fileHash; //存放的chunk的目录
     const filePath = dirPath + '/' + filename; //存放chunk的地址,这个filename前端要进行修改生成有hash值且有索引的名字
@@ -157,8 +162,8 @@ export class FileService {
       res = [];
       message = '秒传';
       code = 0;
-      //更新数据库
-      const result = await this.File.create({
+      //更新数据库,先查找该文件，之后进行上传
+      await this.File.create({
         create_time: new Date().getTime(),
         file_size: this.getDanWei(Number(fileSize)),
         file_md5: fileHash,
@@ -170,8 +175,8 @@ export class FileService {
         user: user._id,
         del_flag: 0,
         file_cover: name,
+        file_pid: filePid,
       });
-      console.log(result);
       await this.File.findOne({
         file_id: fileHash,
       }).populate('user');
@@ -201,13 +206,14 @@ export class FileService {
             });
             message = '继续上传';
             code = 1;
-          } else {
-            //没有进行合并，进行一下合并
-            await this.mergeFile(fileHash, name, fileSize, user_id, file_type);
-            res = [];
-            message = '合并成功';
-            code = 0;
           }
+          // } else {
+          //   //没有进行合并，进行一下合并
+          //   await this.mergeFile(fileHash, name, fileSize, user_id, file_type);
+          //   res = [];
+          //   message = '合并成功';
+          //   code = 0;
+          // }
         });
       } catch (e) {
         return {
@@ -294,24 +300,97 @@ export class FileService {
   /**
    * 文件列表
    * @param value
+   * @param fileType
+   * @param fileId
+   * @param title
    */
-  async findAll(value: { page: number; pageSize: number }) {
+  async findAll(
+    value: { page: number; pageSize: number },
+    fileType: number,
+    fileId: string,
+    title?: string,
+  ) {
     const { page, pageSize } = value;
     //进行文件查询
     try {
-      const res = await this.File.find({ del_flag: 0 })
-        .skip((page - 1) * pageSize)
-        .limit(pageSize);
-      return {
-        data: res,
-        message: '获取成功',
-        code: 0,
-      };
+      //判断是否有fileId:此时获取的是文件夹里面的内容
+      if (fileId) {
+        let res;
+        //判断是否有title
+        if (title) {
+          res = await this.File.find({
+            del_flag: 0,
+            file_pid: fileId,
+            file_name: { $regex: title, $options: 'i' },
+          })
+            .skip((page - 1) * pageSize)
+            .limit(pageSize);
+        } else {
+          res = await this.File.find({ del_flag: 0, file_pid: fileId })
+            .skip((page - 1) * pageSize)
+            .limit(pageSize);
+        }
+        return {
+          data: res,
+          message: '获取成功',
+          code: 0,
+        };
+      }
+      //根据文件的类型来进行查找相关的文件
+      if (fileType >= 0) {
+        let res;
+        if (title) {
+          res = await this.File.find({
+            del_flag: 0,
+            file_type: fileType,
+            file_name: { $regex: title, $options: 'i' },
+          })
+            .skip((page - 1) * pageSize)
+            .limit(pageSize);
+        } else {
+          res = await this.File.find({
+            del_flag: 0,
+            file_type: fileType,
+          })
+            .skip((page - 1) * pageSize)
+            .limit(pageSize);
+        }
+        return {
+          data: res,
+          message: '获取成功',
+          code: 0,
+        };
+      } else {
+        const res = await this.File.find({ del_flag: 0 })
+          .skip((page - 1) * pageSize)
+          .limit(pageSize);
+        return {
+          data: res,
+          message: '获取成功',
+          code: 0,
+        };
+      }
     } catch (err) {
       throw new HttpException(err, HttpStatus.BAD_REQUEST);
     }
   }
 
+  /**
+   * 获取文件信息
+   * @param id
+   */
+  async findFileInfo(id: string) {
+    try {
+      const res = await this.File.find({ _id: id });
+      return {
+        data: res,
+        message: '文件信息获取成功',
+        code: 0,
+      };
+    } catch (e) {
+      throw new HttpException(e, HttpStatus.BAD_REQUEST);
+    }
+  }
   /**
    * 创建目录
    * @param fileId
@@ -333,6 +412,7 @@ export class FileService {
         create_time: new Date().getTime(),
         folder_type: 1,
         user: await this.getUserId(user_id),
+        del_flag: 0,
       });
       return {
         data: '',
@@ -364,7 +444,7 @@ export class FileService {
    * @param filename
    * @param user_id
    */
-  async deleteFolder(fileId: string, filePid: string, filename: string) {
+  async deleteFolder(fileId: string) {
     try {
       await this.File.updateOne(
         {
@@ -378,6 +458,27 @@ export class FileService {
       };
     } catch (e) {
       new HttpException('删除成功', HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+  }
+
+  /**
+   * 批量删除
+   * @param ids
+   */
+  async multipleDelete(ids: string[]) {
+    try {
+      //of得到value，in得到key
+      for (const item of ids) {
+        console.log(item, '删除');
+        await this.File.updateOne({ _id: item }, { del_flag: 1 });
+      }
+      return {
+        message: '删除成功',
+        code: 0,
+      };
+    } catch (e) {
+      console.log(e);
+      return new HttpException(e, HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
 

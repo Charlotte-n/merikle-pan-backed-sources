@@ -29,4 +29,5 @@ export class mergeParam {
   fileSize: number;
   user_id: string;
   file_type: string;
+  filePid: string | number;
 }
