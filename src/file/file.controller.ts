@@ -182,6 +182,7 @@ export class FileController {
   async findFileInfo(@Query() id: string) {
     return await this.fileService.findFileInfo(id);
   }
+
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.fileService.findOne(+id);

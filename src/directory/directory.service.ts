@@ -18,10 +18,13 @@ export class DirectoryService {
     return ((await this.User.findOne({ _id: userId })) as any)._id;
   }
 
-  async getSubDirectory(fileId: string) {
+  async getSubDirectory(fileId: string, ids: string[]) {
     try {
       const res = await this.File.find({
         file_pid: fileId,
+        _id: {
+          $nin: ids,
+        },
       });
       return {
         message: '获取成功',
@@ -37,7 +40,7 @@ export class DirectoryService {
    * 获取所有目录
    * @param filePid
    */
-  async getAllDirectory(filePid: string | number) {
+  async getAllDirectory(filePid: string | number | string[]) {
     try {
       let res;
       //存在父级目录的话进行筛选
@@ -46,7 +49,7 @@ export class DirectoryService {
           del_flag: 0,
           folder_type: 1,
           _id: {
-            $ne: filePid,
+            $nin: filePid,
           },
           file_pid: 0,
         });

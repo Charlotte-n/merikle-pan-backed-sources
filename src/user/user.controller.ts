@@ -34,8 +34,6 @@ export class UserController {
   @Get('info')
   async findUserInfo(@Query('userId') userId: string) {
     const result = await this.userService.findUserInfo(userId);
-    console.log(userId);
-    console.log(result);
     return {
       data: {
         _id: result._id,
@@ -54,20 +52,13 @@ export class UserController {
    * 获取用户可用空间
    * @param userId
    * @param fileSize
-   * @param res
    */
   @Get('space')
   async getSpace(
-    @Param() userId: string,
-    @Param() fileSize: number,
-    @Res({ passthrough: true }) res: any,
+    @Query('userId') userId: string,
+    @Query('fileSize') fileSize?: number,
   ) {
-    const result = await this.userService.getSpace(userId, fileSize);
-    return {
-      data: result.useSpace,
-      message: '成功',
-      code: 0,
-    };
+    return await this.userService.getSpace(userId, fileSize);
   }
   @UseInterceptors(
     FileInterceptor('file', {

@@ -4,7 +4,6 @@ import { UpdateUserDto } from './dto/update-user.dto';
 import { InjectModel } from '@nestjs/mongoose';
 import { User } from '../../libs/db/models/user.model';
 import { Model } from 'mongoose';
-import { ObjectId } from 'mongodb';
 
 @Injectable()
 export class UserService {
@@ -32,13 +31,32 @@ export class UserService {
   }
 
   async getSpace(userId: string, fileSize: number) {
+    console.log(userId);
     try {
-      await this.User.updateOne(
-        { _id: userId },
-        { $inc: { useSpace: fileSize } },
-        { upsert: true },
-      );
-      return await this.User.findOne({ _id: userId });
+      if (fileSize) {
+        //更新用户使用的空间
+        const result = await this.User.updateOne(
+          { _id: userId },
+          { $inc: { useSpace: fileSize } },
+          { upsert: true },
+        );
+        return {
+          data: result,
+          message: '成功',
+          code: 0,
+        };
+      } else {
+        //获取用户空间
+        const res = await this.User.findOne({ _id: userId.trim() });
+        return {
+          data: {
+            useSpace: res.useSpace,
+            totalSpace: res.totalSpace,
+          },
+          message: '获取成功',
+          code: 0,
+        };
+      }
     } catch (e) {
       throw new HttpException(e, HttpStatus.INTERNAL_SERVER_ERROR);
     }

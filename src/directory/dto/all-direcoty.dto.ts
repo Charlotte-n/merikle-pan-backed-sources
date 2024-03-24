@@ -1,3 +1,3 @@
 export class AllDirectoryDto {
-  filePid: string;
+  filePid: string | string[];
 }

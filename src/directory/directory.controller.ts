@@ -8,8 +8,11 @@ export class DirectoryController {
   constructor(private readonly directoryService: DirectoryService) {}
 
   @Get('subDirectory')
-  async getSubDirectory(@Query('fileId') fileId: string) {
-    return await this.directoryService.getSubDirectory(fileId);
+  async getSubDirectory(
+    @Query('fileId') fileId: string,
+    @Query('ids') ids: string[],
+  ) {
+    return await this.directoryService.getSubDirectory(fileId, ids);
   }
 
   /**

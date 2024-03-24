@@ -391,6 +391,23 @@ export class FileService {
       throw new HttpException(e, HttpStatus.BAD_REQUEST);
     }
   }
+
+  //获取使用空间
+  async getSpace(userId: string) {
+    try {
+      const res = await this.User.findOne({
+        _id: userId,
+      });
+      console.log(res);
+      return {
+        message: '获取成功',
+        data: {
+          useSpace: res.useSpace,
+          totalSpace: res.totalSpace,
+        },
+      };
+    } catch (e) {}
+  }
   /**
    * 创建目录
    * @param fileId
