@@ -1,22 +1,24 @@
 import { Controller, Get, Post, Body, Query, Patch } from '@nestjs/common';
 import { DirectoryService } from './directory.service';
 import { MoveDirectoryDto } from './dto/move-directory.dto';
+import { AllDirectoryDto } from './dto/all-direcoty.dto';
 
 @Controller('directory')
 export class DirectoryController {
   constructor(private readonly directoryService: DirectoryService) {}
 
+  @Get('subDirectory')
+  async getSubDirectory(@Query('fileId') fileId: string) {
+    return await this.directoryService.getSubDirectory(fileId);
+  }
+
   /**
    * 获取用户的folder
-   * @param userId
-   * @param filePid
+   * @param body
    */
-  @Get('allDirectory')
-  async getAllDirectory(
-    @Query('userId') userId: string,
-    @Query('filePid') filePid: number | string,
-  ) {
-    return await this.directoryService.getAllDirectory(userId, filePid);
+  @Post('allDirectory')
+  async getAllDirectory(@Body() body: AllDirectoryDto) {
+    return await this.directoryService.getAllDirectory(body.filePid);
   }
 
   /**

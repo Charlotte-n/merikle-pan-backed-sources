@@ -18,31 +18,47 @@ export class DirectoryService {
     return ((await this.User.findOne({ _id: userId })) as any)._id;
   }
 
+  async getSubDirectory(fileId: string) {
+    try {
+      const res = await this.File.find({
+        file_pid: fileId,
+      });
+      return {
+        message: '获取成功',
+        code: 0,
+        data: res,
+      };
+    } catch (e) {
+      return new HttpException(e, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+  }
+
   /**
    * 获取所有目录
-   * @param userId
    * @param filePid
    */
-  async getAllDirectory(userId: string, filePid: string | number) {
+  async getAllDirectory(filePid: string | number) {
     try {
       let res;
       //存在父级目录的话进行筛选
-      const id = await this.getUserId(userId);
       if (filePid != 0) {
         res = await this.File.find({
-          user: id,
           del_flag: 0,
           folder_type: 1,
           _id: {
             $ne: filePid,
           },
+          file_pid: 0,
         });
       } else {
         //找到全部
         res = await this.File.find({
-          user: id,
           folder_type: 1,
           del_flag: 0,
+          file_pid: filePid,
+          _id: {
+            $ne: filePid,
+          },
         });
       }
       return {
