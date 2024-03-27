@@ -21,7 +21,7 @@ export class FileService {
       'image',
       'pdf',
       'word',
-      'excel',
+      'sheet',
       'txt',
       'code',
       'zip',

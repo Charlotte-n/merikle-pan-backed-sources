@@ -17,6 +17,9 @@ import { ServeStaticModule } from '@nestjs/serve-static';
 import { PagationService } from './pagation/pagation.service';
 import { FileModule } from './file/file.module';
 import { DirectoryModule } from './directory/directory.module';
+import { ShareModule } from './share/share.module';
+import { AdminModule } from './admin/admin.module';
+import { PreviewModule } from './preview/preview.module';
 
 @Module({
   imports: [
@@ -56,6 +59,12 @@ import { DirectoryModule } from './directory/directory.module';
     FileModule,
 
     DirectoryModule,
+
+    ShareModule,
+
+    AdminModule,
+
+    PreviewModule,
   ],
   controllers: [AppController],
   providers: [

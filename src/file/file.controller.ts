@@ -82,7 +82,6 @@ export class FileController {
       file_type,
       filePid,
     );
-    console.log(result);
     return result;
   }
 
