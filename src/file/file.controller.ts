@@ -42,7 +42,6 @@ export class FileController {
     @Query('fileHash') fileHash: string,
     @Query('chunkIndex') chunkIndex: number,
   ) {
-    console.log(file, '我是文件', filename, fileHash, chunkIndex);
     return await this.fileService.uploadChunk(
       file,
       filename,
@@ -72,7 +71,6 @@ export class FileController {
     @Query('file_type') file_type: string,
     @Query('filePid') filePid: string | number,
   ) {
-    console.log(fileSize, user_id, filename, totalCount, fileHash);
     const result = await this.fileService.verifyExit(
       fileSize,
       user_id,
@@ -108,8 +106,8 @@ export class FileController {
    */
   @Post('deleteFolder')
   async deleteFolder(@Body() body: DeleteFileorFolderDto) {
-    const { fileId } = body;
-    return await this.fileService.deleteFolder(fileId);
+    const { fileId, time } = body;
+    return await this.fileService.deleteFolder(fileId, time);
   }
 
   /**
@@ -118,8 +116,8 @@ export class FileController {
    */
   @Post('multipleDelete')
   async multipleDelete(@Body() body: MultipleDeleteDto) {
-    const { ids } = body;
-    return await this.fileService.multipleDelete(ids);
+    const { ids, time } = body;
+    return await this.fileService.multipleDelete(ids, time);
   }
 
   /**

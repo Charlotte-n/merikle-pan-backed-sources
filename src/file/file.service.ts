@@ -17,7 +17,7 @@ export class FileService {
     const category = [
       'folder',
       'video',
-      'music',
+      'audio',
       'image',
       'pdf',
       'word',
@@ -67,18 +67,17 @@ export class FileService {
       startPos += fs.statSync(filePath).size;
     });
     try {
-      const id = await this.getUserId(user_id);
       //将文件的数据插入到file里面
       await this.File.create({
         file_name: filename,
-        file_path: 'upload/' + filename,
+        file_path: filename,
         file_id: fileHash + new Date().getSeconds(),
         file_size: this.getDanWei(Number(fileSize)),
         file_md5: fileHash,
         create_time: new Date().getTime(),
         file_type: this.getFileType(file_type),
         folder_type: 0,
-        user: id,
+        user: user_id,
         file_cover: filename,
         del_flag: 0,
         file_pid: filePid,
@@ -169,10 +168,10 @@ export class FileService {
         file_md5: fileHash,
         file_id: fileHash,
         file_name: name,
-        file_path: filePath,
+        file_path: filename,
         file_type: this.getFileType(file_type),
         folder_type: 0,
-        user: user._id,
+        user: user_id,
         del_flag: 0,
         file_cover: name,
         file_pid: filePid,
@@ -190,7 +189,6 @@ export class FileService {
       );
     } catch (e) {
       //文件不存在,文件夹存在
-      console.log(e);
       try {
         fs.statSync(dirPath);
         fs.readdir(dirPath, async (error, files) => {
@@ -461,13 +459,13 @@ export class FileService {
    * @param filename
    * @param user_id
    */
-  async deleteFolder(fileId: string) {
+  async deleteFolder(fileId: string, time: string) {
     try {
       await this.File.updateOne(
         {
           _id: fileId,
         },
-        { del_flag: 1 },
+        { del_flag: 1, del_time: time },
       );
       return {
         message: '删除成功',
@@ -481,13 +479,16 @@ export class FileService {
   /**
    * 批量删除
    * @param ids
+   * @param time
    */
-  async multipleDelete(ids: string[]) {
+  async multipleDelete(ids: string[], time: string) {
     try {
       //of得到value，in得到key
       for (const item of ids) {
-        console.log(item, '删除');
-        await this.File.updateOne({ _id: item }, { del_flag: 1 });
+        await this.File.updateOne(
+          { _id: item },
+          { del_flag: 1, del_time: time },
+        );
       }
       return {
         message: '删除成功',

@@ -52,13 +52,15 @@ export class UserController {
    * 获取用户可用空间
    * @param userId
    * @param fileSize
+   * @param type
    */
   @Get('space')
   async getSpace(
     @Query('userId') userId: string,
-    @Query('fileSize') fileSize?: number,
+    @Query('fileSize') fileSize?: number[],
+    @Query('type') type?: number,
   ) {
-    return await this.userService.getSpace(userId, fileSize);
+    return await this.userService.getSpace(userId, type, fileSize);
   }
   @UseInterceptors(
     FileInterceptor('file', {

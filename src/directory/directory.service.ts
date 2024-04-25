@@ -41,6 +41,7 @@ export class DirectoryService {
    * @param filePid
    */
   async getAllDirectory(filePid: string | number | string[]) {
+    console.log(filePid);
     try {
       let res;
       //存在父级目录的话进行筛选
@@ -59,9 +60,6 @@ export class DirectoryService {
           folder_type: 1,
           del_flag: 0,
           file_pid: filePid,
-          _id: {
-            $ne: filePid,
-          },
         });
       }
       return {

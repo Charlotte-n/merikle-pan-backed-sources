@@ -30,16 +30,31 @@ export class UserService {
     }
   }
 
-  async getSpace(userId: string, fileSize: number) {
-    console.log(userId);
+  async getSpace(userId: string, type?: number, fileSize?: number[]) {
     try {
-      if (fileSize) {
-        //更新用户使用的空间
-        const result = await this.User.updateOne(
-          { _id: userId },
-          { $inc: { useSpace: fileSize } },
-          { upsert: true },
-        );
+      if (fileSize && fileSize.length) {
+        let result;
+        if (type == 1) {
+          //更新用户使用的空间
+          //进行循环
+          for (const size of fileSize) {
+            result = await this.User.updateOne(
+              { _id: userId },
+              { $inc: { useSpace: size } },
+              { upsert: true },
+            );
+          }
+        } else {
+          //更新用户使用的空间
+          for (const size of fileSize) {
+            result = await this.User.updateOne(
+              { _id: userId },
+              { $desc: { useSpace: -1 * size } },
+              { upsert: true },
+            );
+          }
+        }
+
         return {
           data: result,
           message: '成功',

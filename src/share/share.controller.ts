@@ -1,34 +1,36 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Body, Controller, Get, Post, Query } from '@nestjs/common';
 import { ShareService } from './share.service';
-import { CreateShareDto } from './dto/create-share.dto';
-import { UpdateShareDto } from './dto/update-share.dto';
+import { CreateShareData, CreateShareDto } from './dto/create-share.dto';
+import { CancelFileDto } from './dto/cancel-file.dto';
 
 @Controller('share')
 export class ShareController {
   constructor(private readonly shareService: ShareService) {}
 
-  @Post()
-  create(@Body() createShareDto: CreateShareDto) {
-    return this.shareService.create(createShareDto);
+  //创建分享链接
+  @Post('link')
+  async createShareLink(@Body() body: CreateShareDto) {
+    return await this.shareService.createShareLink(body as CreateShareData);
+  }
+  //获取分享的列表
+  @Get('list')
+  async getShareFile(@Query('userId') userId: number) {
+    return await this.shareService.getShareFile(userId);
+  }
+  //取消分享
+  @Post('cancel')
+  async cancelShareFile(@Body() body: CancelFileDto) {
+    const { ids } = body;
+    return await this.shareService.cancelShareFile(ids);
   }
 
-  @Get()
-  findAll() {
-    return this.shareService.findAll();
+  @Get('getShare')
+  async getShareInfo(@Query('fileId') fileId: string) {
+    return await this.shareService.getShareInfo(fileId);
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.shareService.findOne(+id);
-  }
-
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateShareDto: UpdateShareDto) {
-    return this.shareService.update(+id, updateShareDto);
-  }
-
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.shareService.remove(+id);
+  @Get('getShareList')
+  async getShareList(@Query('fileId') fileId: string) {
+    return await this.shareService.getShareList(fileId);
   }
 }

@@ -10,9 +10,8 @@ import { EmailSendModule } from './email-send/email-send.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { JwtModule } from '@nestjs/jwt';
 import { LoginGuardGuard } from './login-guard/login-guard.guard';
-import { MulterModule } from '@nestjs/platform-express';
-import { diskStorage } from 'multer';
 import { extname, join } from 'path';
+import { YjsGateway } from './websocket/websocket.getway';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { PagationService } from './pagation/pagation.service';
 import { FileModule } from './file/file.module';
@@ -20,6 +19,8 @@ import { DirectoryModule } from './directory/directory.module';
 import { ShareModule } from './share/share.module';
 import { AdminModule } from './admin/admin.module';
 import { PreviewModule } from './preview/preview.module';
+import { RecycleModule } from './recycle/recycle.module';
+import { CommonFileModule } from './common-file/common-file.module';
 
 @Module({
   imports: [
@@ -65,6 +66,10 @@ import { PreviewModule } from './preview/preview.module';
     AdminModule,
 
     PreviewModule,
+
+    RecycleModule,
+
+    CommonFileModule,
   ],
   controllers: [AppController],
   providers: [
@@ -74,6 +79,7 @@ import { PreviewModule } from './preview/preview.module';
       useClass: LoginGuardGuard,
     },
     PagationService,
+    YjsGateway,
   ],
 })
 export class AppModule {}

@@ -7,7 +7,6 @@ export class PreviewService {
   create(createPreviewDto: CreatePreviewDto) {
     return 'This action adds a new preview';
   }
-
   findAll() {
     return `This action returns all preview`;
   }
