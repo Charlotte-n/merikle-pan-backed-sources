@@ -21,6 +21,8 @@ import { AdminModule } from './admin/admin.module';
 import { PreviewModule } from './preview/preview.module';
 import { RecycleModule } from './recycle/recycle.module';
 import { CommonFileModule } from './common-file/common-file.module';
+import { CommonExcelModule } from './common-excel/common-excel.module';
+import { WebsocketExcelGateway } from './websocket-excel/websocket-excel.gateway';
 
 @Module({
   imports: [
@@ -70,6 +72,8 @@ import { CommonFileModule } from './common-file/common-file.module';
     RecycleModule,
 
     CommonFileModule,
+
+    CommonExcelModule,
   ],
   controllers: [AppController],
   providers: [
@@ -80,6 +84,7 @@ import { CommonFileModule } from './common-file/common-file.module';
     },
     PagationService,
     YjsGateway,
+    WebsocketExcelGateway,
   ],
 })
 export class AppModule {}

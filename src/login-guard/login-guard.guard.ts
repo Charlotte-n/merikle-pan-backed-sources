@@ -25,6 +25,7 @@ export class LoginGuardGuard implements CanActivate {
       '/lr/register-code',
       '/lr/verifyCode',
       '/lr/:id',
+      '/commonExcel/fetchExcelData',
     ];
     //简单的检验了下token
     const request = context.switchToHttp().getRequest();

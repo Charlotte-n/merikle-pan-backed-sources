@@ -9,9 +9,7 @@ import {
 } from '@nestjs/websockets';
 import { Server, WebSocket } from 'ws';
 import * as Y from 'yjs';
-import { WebsocketProvider } from 'y-websocket';
 import { InjectModel } from '@nestjs/mongoose';
-import { Share } from '../../libs/db/models/share.model';
 import { CommonFile } from '../../libs/db/models/commonFile.model';
 import { Model } from 'mongoose';
 import { HttpException, HttpStatus } from '@nestjs/common';
@@ -52,27 +50,4 @@ export class YjsGateway implements OnGatewayConnection, OnGatewayDisconnect {
       throw new HttpException(e, HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
-
-  // handleUpdateYjs(client: WebSocket, payload: any): void {
-  //   const { roomName, update } = payload;
-  //
-  //   // 获取对应的 Yjs 文档
-  //   const ydoc = this.ydocMap.get(roomName);
-  //   if (ydoc) {
-  //     Y.applyUpdate(ydoc, update);
-  //
-  //     // 广播更新给所有连接的客户端（除了发送者）
-  //     this.server.clients.forEach((ws) => {
-  //       if (ws !== client && ws.readyState === WebSocket.OPEN) {
-  //         ws.send(
-  //           JSON.stringify({
-  //             type: 'yjsUpdate',
-  //             roomName,
-  //             update,
-  //           }),
-  //         );
-  //       }
-  //     });
-  //   }
-  // }
 }
