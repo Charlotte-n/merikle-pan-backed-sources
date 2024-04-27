@@ -36,6 +36,7 @@
     "class-transformer": "^0.5.1",
     "class-validator": "^0.14.1",
     "cookie-parser": "^1.4.6",
+    "dayjs": "^1.11.10",
     "express-session": "^1.18.0",
     "mongodb": "5.8.0",
     "mongoose-sequence": "^6.0.1",
