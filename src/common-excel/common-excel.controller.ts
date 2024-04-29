@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Res } from '@nestjs/common';
+import { Controller, Get, Post, Body, Res, Query } from '@nestjs/common';
 import { CommonExcelService } from './common-excel.service';
 
 @Controller('commonExcel')
@@ -9,8 +9,8 @@ export class CommonExcelController {
   async saveExcelData() {}
 
   @Post('fetchExcelData')
-  async fetchExcelData(@Body() body: any, @Res() res: any) {
-    const result = await this.commonExcelService.fetchExcelData(body);
+  async fetchExcelData(@Query('id') id: string, @Res() res: any) {
+    const result = await this.commonExcelService.fetchExcelData(id);
     res.send(result.data);
   }
 }

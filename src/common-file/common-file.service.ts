@@ -15,7 +15,6 @@ export class CommonFileService {
   private readonly ConFile: Model<CommonFile>;
   async uploadFileContent(body: CreateCommonFileType) {
     const { userId, content, category } = body;
-    console.log(userId);
     try {
       await this.ConFile.create({
         isPrivate: false,
@@ -97,6 +96,7 @@ export class CommonFileService {
           content: res.content,
           title: res.name,
           edit: res.isEdit,
+          userId: res.userId,
         },
         msg: '获取成功',
       };

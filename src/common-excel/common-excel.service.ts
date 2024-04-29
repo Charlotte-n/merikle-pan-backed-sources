@@ -7,11 +7,10 @@ import { Model } from 'mongoose';
 export class CommonExcelService {
   @InjectModel(CommonFile.name)
   private readonly ConFile: Model<CommonFile>;
-  async fetchExcelData(body: any) {
-    const { id } = body;
+  async fetchExcelData(id: string) {
     try {
       const res = await this.ConFile.findOne({
-        _id: '662aef46fa4c12d624dadb65',
+        _id: id,
       });
       return {
         code: 0,

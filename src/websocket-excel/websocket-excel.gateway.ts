@@ -39,11 +39,16 @@ export class WebsocketExcelGateway
   async handleConnection(client: WebSocket, ...args) {
     const fileId = getId(args);
     addClient(client);
-    const res = [];
+    const aa = await this.ConFile.findOne({
+      _id: fileId,
+    });
+    let res = [];
+    if (aa.content) {
+      res = [...(aa.content as unknown as [])];
+    }
     luckySheetSendMessage(clients, client, fileId);
     client.on('message', async (message) => {
       const result = unzip(message);
-      console.log(result, '获取的结果值');
       //进行映射
       if (JSON.parse(result).t === 'v') {
         res.push(result);
