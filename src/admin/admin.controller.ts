@@ -1,7 +1,9 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body } from '@nestjs/common';
 import { AdminService } from './admin.service';
 import { CreateAdminDto } from './dto/create-admin.dto';
-import { UpdateAdminDto } from './dto/update-admin.dto';
+import { SearchUserDto } from './dto/search-user.dto';
+import { DeleteUserDto } from './dto/delete-user.dto';
+import { updateInitialSpaceDto } from './dto/updateInitialSpace';
 
 @Controller('admin')
 export class AdminController {
@@ -12,23 +14,38 @@ export class AdminController {
     return this.adminService.create(createAdminDto);
   }
 
-  @Get()
-  findAll() {
-    return this.adminService.findAll();
+  /**
+   * 查找所有用户
+   */
+  @Get('findAllUser')
+  async findAllUser() {
+    return await this.adminService.findAllUser();
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.adminService.findOne(+id);
+  /**
+   * 模糊搜索用户名
+   */
+  @Post('searchUser')
+  async searchUserApi(@Body() body: SearchUserDto) {
+    return await this.adminService.searchUser(body);
   }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateAdminDto: UpdateAdminDto) {
-    return this.adminService.update(+id, updateAdminDto);
+  /**
+   * 删除用户
+   * @param body
+   */
+  @Post('deleteUser')
+  async deleteUser(@Body() body: DeleteUserDto) {
+    return await this.adminService.deleteUser(body);
   }
 
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.adminService.remove(+id);
+  @Post('changeUserSpace')
+  async changeUserSpace(@Body() body: any) {
+    return await this.adminService.changeUserSpace(body);
+  }
+
+  @Post('initialization')
+  async InitialSpace(@Body() body: updateInitialSpaceDto) {
+    return await this.adminService.InitialSpace(body);
   }
 }

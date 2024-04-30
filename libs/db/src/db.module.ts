@@ -6,12 +6,15 @@ import { User, UserSchema } from '../models/user.model';
 import { Share, ShareSchema } from '../models/share.model';
 import { FileSchema, File } from '../models/file_info.model';
 import { CommonFileSchema, CommonFile } from '../models/commonFile.model';
+import { AdminModel, AdminSchema } from '../models/admin.model';
 
+//创建数据库模块
 const models = MongooseModule.forFeature([
   { name: User.name, schema: UserSchema },
   { name: File.name, schema: FileSchema },
   { name: Share.name, schema: ShareSchema },
   { name: CommonFile.name, schema: CommonFileSchema },
+  { name: AdminModel.name, schema: AdminSchema },
 ]);
 
 @Global()

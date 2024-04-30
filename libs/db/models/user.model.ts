@@ -1,6 +1,5 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { HydratedDocument } from 'mongoose';
-import * as mongoose from 'mongoose';
 
 export type UserDocument = HydratedDocument<User>;
 
@@ -47,6 +46,8 @@ export class User {
 
   @Prop()
   assess_Token: string;
+  @Prop()
+  delete: number; //删除为1,不删除为0
   @Prop()
   is_remember: number; //0为记住，1为记不住
 }

@@ -23,6 +23,7 @@ import { RecycleModule } from './recycle/recycle.module';
 import { CommonFileModule } from './common-file/common-file.module';
 import { CommonExcelModule } from './common-excel/common-excel.module';
 import { WebsocketExcelGateway } from './websocket-excel/websocket-excel.gateway';
+import { InitialSpaceModule } from './initial-space/initial-space.module';
 
 @Module({
   imports: [
@@ -74,6 +75,8 @@ import { WebsocketExcelGateway } from './websocket-excel/websocket-excel.gateway
     CommonFileModule,
 
     CommonExcelModule,
+
+    InitialSpaceModule,
   ],
   controllers: [AppController],
   providers: [
