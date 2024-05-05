@@ -10,7 +10,6 @@ import { InjectModel } from '@nestjs/mongoose';
 import { CommonFile } from '../../libs/db/models/commonFile.model';
 import { Model } from 'mongoose';
 import { Server, WebSocket } from 'ws';
-import { HttpException, HttpStatus } from '@nestjs/common';
 import unzip from '../utils/ws/unzip';
 import getId from '../utils/ws/getId';
 import luckySheetSendMessage from '../utils/ws/socket';
@@ -24,11 +23,8 @@ function addClient(client) {
 }
 
 // 从集合中移除连接
-// function removeClient(client) {
-//   clients.(client);
-// }
 
-@WebSocketGateway(2555, { cors: '*', messageEventHandler: true })
+@WebSocketGateway(2575)
 export class WebsocketExcelGateway
   implements OnGatewayConnection, OnGatewayDisconnect
 {

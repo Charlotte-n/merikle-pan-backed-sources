@@ -1,14 +1,13 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { CreateInitialSpaceDto } from './dto/create-initial-space.dto';
-import { UpdateInitialSpaceDto } from './dto/update-initial-space.dto';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { InitialSpace } from './entities/initial-space.entity';
+import { AdminModel } from '../../libs/db/models/admin.model';
 
 @Injectable()
 export class InitialSpaceService {
-  @InjectModel(InitialSpace.name)
-  private InitialSpace: Model<InitialSpace>;
+  @InjectModel(AdminModel.name)
+  private InitialSpace: Model<AdminModel>;
   create(createInitialSpaceDto: CreateInitialSpaceDto) {
     return 'This action adds a new initialSpace';
   }
@@ -28,7 +27,7 @@ export class InitialSpaceService {
           totalSpace: space,
         },
       );
-      if (res) {
+      if (res.matchedCount > 0) {
         return {
           code: 0,
           msg: '更新成功',

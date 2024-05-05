@@ -10,6 +10,7 @@ import {
 } from './dto/post-login-register.dto';
 import { PostPasswordDtoType } from './dto/post-password.dto';
 import { md5 } from '../utils';
+import { AdminModel } from '../../libs/db/models/admin.model';
 
 @Injectable()
 export class LoginRegisterService {
@@ -18,6 +19,8 @@ export class LoginRegisterService {
   //导入User模型
   @InjectModel(User.name)
   private readonly User: Model<User>;
+  @InjectModel(AdminModel.name)
+  private InitialSpace: Model<AdminModel>;
 
   /**
    * 登录
@@ -41,13 +44,16 @@ export class LoginRegisterService {
     const { email, nick_name, password } = body;
     try {
       if (email && nick_name && password) {
+        const res = await this.InitialSpace.findOne({
+          delete: 0,
+        });
         await this.User.create({
           email,
           nick_name,
           password: md5(password),
           qq_open_id: 0,
           create_time: new Date(),
-          totalSpace: 10,
+          totalSpace: res.totalSpace ? res.totalSpace : 10,
         });
         return {
           data: '',
