@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Res, Query } from '@nestjs/common';
+import { Controller, Post, Res, Query } from '@nestjs/common';
 import { CommonExcelService } from './common-excel.service';
 
 @Controller('commonExcel')

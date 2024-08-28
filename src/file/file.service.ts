@@ -268,7 +268,7 @@ export class FileService {
               }
             },
           );
-        }).then(() => {
+        }).then(async () => {
           //成功创建了目录的话就写入文件
           fs.cpSync(chunk.path, chunkPath);
           fs.rmSync(chunkPath);

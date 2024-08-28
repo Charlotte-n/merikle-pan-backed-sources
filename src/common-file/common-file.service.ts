@@ -14,7 +14,7 @@ export class CommonFileService {
   @InjectModel(CommonFile.name)
   private readonly ConFile: Model<CommonFile>;
   async uploadFileContent(body: CreateCommonFileType) {
-    const { userId, content, category } = body;
+    const { userId, category } = body;
     try {
       await this.ConFile.create({
         isPrivate: false,
@@ -94,6 +94,21 @@ export class CommonFileService {
         code: 0,
         data: {
           content: res.content,
+        },
+        msg: '获取成功',
+      };
+    } catch (e) {
+      throw new HttpException(e, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+  }
+  async getFileInfo(id: string) {
+    try {
+      const res = await this.ConFile.findOne({
+        _id: id,
+      });
+      return {
+        code: 0,
+        data: {
           title: res.name,
           edit: res.isEdit,
           userId: res.userId,
