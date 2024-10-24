@@ -10,8 +10,7 @@ import { EmailSendModule } from './email-send/email-send.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { JwtModule } from '@nestjs/jwt';
 import { LoginGuardGuard } from './login-guard/login-guard.guard';
-import { extname, join } from 'path';
-import { YjsGateway } from './websocket/websocket.getway';
+import { join } from 'path';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { PagationService } from './pagation/pagation.service';
 import { FileModule } from './file/file.module';
@@ -21,6 +20,7 @@ import { AdminModule } from './admin/admin.module';
 import { PreviewModule } from './preview/preview.module';
 import { RecycleModule } from './recycle/recycle.module';
 import { CommonFileModule } from './common-file/common-file.module';
+import { YjsModule } from './yjs/yjs.module';
 
 @Module({
   imports: [
@@ -39,8 +39,9 @@ import { CommonFileModule } from './common-file/common-file.module';
     JwtModule.registerAsync({
       global: true,
       useFactory(configService: ConfigService) {
+        //configService.get('jwt_secret')
         return {
-          secret: configService.get('jwt_secret'),
+          secret: 'merikle',
           signOptions: {
             expiresIn: '60m', // 默认 30 分钟
           },
@@ -70,6 +71,8 @@ import { CommonFileModule } from './common-file/common-file.module';
     RecycleModule,
 
     CommonFileModule,
+
+    YjsModule,
   ],
   controllers: [AppController],
   providers: [
@@ -79,7 +82,6 @@ import { CommonFileModule } from './common-file/common-file.module';
       useClass: LoginGuardGuard,
     },
     PagationService,
-    YjsGateway,
   ],
 })
 export class AppModule {}

@@ -56,11 +56,13 @@ export class LoginRegisterController {
           password,
           result.password,
         );
+        console.log(result);
         if (md5(password) === result.password) {
           const token = await this.jwtService.signAsync({
             id: result._id,
             nick_name: result.nick_name,
           });
+
           respon.setHeader('token', JSON.stringify(token));
           return {
             data: {
