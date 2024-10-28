@@ -21,6 +21,7 @@ import { PreviewModule } from './preview/preview.module';
 import { RecycleModule } from './recycle/recycle.module';
 import { CommonFileModule } from './common-file/common-file.module';
 import { YjsModule } from './yjs/yjs.module';
+import { ExcelModule } from './excel/excel.module';
 
 @Module({
   imports: [
@@ -73,6 +74,8 @@ import { YjsModule } from './yjs/yjs.module';
     CommonFileModule,
 
     YjsModule,
+
+    ExcelModule,
   ],
   controllers: [AppController],
   providers: [
