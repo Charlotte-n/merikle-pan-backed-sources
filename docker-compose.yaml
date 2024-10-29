@@ -20,7 +20,7 @@ services:
     image: crpi-pjvn0sswaskznn4o.cn-beijing.personal.cr.aliyuncs.com/merikle/merikle-pan-backend:latest
     container_name: merikle-pan-backend
     ports:
-      - 7005:7005
+      - 3000:3000
     env_file:
       - .env.production
 
