@@ -20,6 +20,10 @@ const models = MongooseModule.forFeature([
   imports: [
     MongooseModule.forRoot(
       `${process.env.NODE_ENV === 'production' ? 'mongodb://merikle-pan-mongo:27017/pan?authSource=admin' : 'mongodb://127.0.0.1:27017/pan?authSource=admin'}`,
+      {
+        user: 'mongo_pcwdfZ',
+        pass: 'mongo_ZJ2sE2',
+      },
     ),
     models,
   ],
