@@ -15,7 +15,7 @@ import { ConfigService } from '@nestjs/config';
             port: 6379,
           },
           database: 1,
-          password: configService.get<string>('REDIS_PASS'),
+          password: 'redis_EGpy5k',
         });
         await client.connect();
         return client;
