@@ -18,20 +18,12 @@ const models = MongooseModule.forFeature([
 @Global()
 @Module({
   imports: [
-    // MongooseModule.forRoot('mongodb://127.0.0.1:27017/pan?authSource=admin'),
+    MongooseModule.forRoot(
+      `${process.env.NODE_ENV === 'production' ? 'mongodb://merikle-pan-mongo:27017/pan?authSource=admin' : 'mongodb://127.0.0.1:27017/pan?authSource=admin'}`,
+    ),
     models,
   ],
-  providers: [
-    DbService,
-    {
-      provide: 'MONGODB_URI',
-      async useFactory(configService: ConfigService) {
-        const client = new MongoClient(configService.get('MONGODB_URI'));
-        return client;
-      },
-      inject: [ConfigService],
-    },
-  ],
+  providers: [DbService],
   exports: [DbService, MongooseModule],
 })
 export class DbModule {}
