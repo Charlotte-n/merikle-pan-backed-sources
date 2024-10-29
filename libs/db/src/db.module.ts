@@ -6,8 +6,7 @@ import { User, UserSchema } from '../models/user.model';
 import { Share, ShareSchema } from '../models/share.model';
 import { FileSchema, File } from '../models/file_info.model';
 import { CommonFileSchema, CommonFile } from '../models/commonFile.model';
-import { ConfigService } from '@nestjs/config';
-import { MongoClient } from 'mongodb';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 const models = MongooseModule.forFeature([
   { name: User.name, schema: UserSchema },
   { name: File.name, schema: FileSchema },
@@ -18,13 +17,13 @@ const models = MongooseModule.forFeature([
 @Global()
 @Module({
   imports: [
-    MongooseModule.forRoot(
-      `${process.env.NODE_ENV === 'production' ? 'mongodb://merikle-pan-mongo:27017/pan?authSource=admin' : 'mongodb://127.0.0.1:27017/pan?authSource=admin'}`,
-      {
-        user: 'mongo_pcwdfZ',
-        pass: 'mongo_ZJ2sE2',
-      },
-    ),
+    MongooseModule.forRootAsync({
+      imports: [ConfigModule],
+      useFactory: async (configService: ConfigService) => ({
+        uri: configService.get<string>('MONGODB_URI'),
+      }),
+      inject: [ConfigService],
+    }),
     models,
   ],
   providers: [DbService],

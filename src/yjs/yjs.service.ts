@@ -13,10 +13,13 @@ export class YjsService {
   private docs: Map<string, { doc: Y.Doc; awareness: Awareness }> = new Map();
 
   constructor() {
-    this.mdb = new MongodbPersistence('mongodb://127.0.0.1:27017/pan', {
-      flushSize: 1000,
-      multipleCollections: false,
-    });
+    this.mdb = new MongodbPersistence(
+      'mongodb://mongo_eEptY5:mongo_M7dAPh@localhost:27017/pan?authSource=admin',
+      {
+        flushSize: 1000,
+        multipleCollections: false,
+      },
+    );
 
     setPersistence({
       bindState: async (docName, ydoc) => {

@@ -11,10 +11,11 @@ import { ConfigService } from '@nestjs/config';
       async useFactory(configService: ConfigService) {
         const client = createClient({
           socket: {
-            host: configService.get('redis_server_host'),
-            port: configService.get('redis_server_port'),
+            host: configService.get<string>('REDIS_SERVER_HOST'),
+            port: configService.get<number>('REDIS_SERVER_PORT'),
           },
           database: 1,
+          password: configService.get<string>('REDIS_PASS'),
         });
         await client.connect();
         return client;
