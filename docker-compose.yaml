@@ -5,13 +5,13 @@ services:
     volumes:
       - mongo_data_3:/data/db
     env_file:
-      - 1panel.env
+      - .env.production
 
   merikle-pan-redis:
     image: redis:6
     container_name: merikle-pan-redis
     env_file:
-      - 1panel.env
+      - .env.production
 
   merikle-pan-backend:
     depends_on:
@@ -22,7 +22,7 @@ services:
     ports:
       - 7005:7005
     env_file:
-      - 1panel.env
+      - .env.production
 
 volumes:
   mongo_data_3:

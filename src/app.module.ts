@@ -34,7 +34,7 @@ import { ExcelModule } from './excel/excel.module';
     //配置.env
     ConfigModule.forRoot({
       isGlobal: true,
-      envFilePath: `src/.env.${process.env.NODE_ENV}`,
+      envFilePath: `src/.env${process.env.NODE_ENV}`,
     }),
     //配置JWT
     JwtModule.registerAsync({
