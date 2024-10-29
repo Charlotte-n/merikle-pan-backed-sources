@@ -34,13 +34,13 @@ import { ExcelModule } from './excel/excel.module';
     //配置.env
     ConfigModule.forRoot({
       isGlobal: true,
-      envFilePath: 'src/.env',
+      envFilePath: `src/.env.${process.env.NODE_ENV}`,
     }),
     //配置JWT
     JwtModule.registerAsync({
       global: true,
       useFactory(configService: ConfigService) {
-        //configService.get('jwt_secret')
+        configService.get('JWT_SECRET');
         return {
           secret: 'merikle',
           signOptions: {

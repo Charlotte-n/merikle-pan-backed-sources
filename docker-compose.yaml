@@ -1,0 +1,28 @@
+services:
+  merikle-pan-mongo:
+    image: mongo
+    container_name: merikle-pan-mongo
+    volumes:
+      - mongo_data_3:/data/db
+    env_file:
+      - 1panel.env
+
+  merikle-pan-redis:
+    image: redis:6
+    container_name: merikle-pan-redis
+    env_file:
+      - 1panel.env
+
+  merikle-pan-backend:
+    depends_on:
+      - merikle-pan-mongo
+      - merikle-pan-redis
+    image: crpi-pjvn0sswaskznn4o.cn-beijing.personal.cr.aliyuncs.com/merikle/merikle-pan-backend:latest
+    container_name: merikle-pan-backend
+    ports:
+      - 7005:7005
+    env_file:
+      - 1panel.env
+
+volumes:
+  mongo_data_3:
