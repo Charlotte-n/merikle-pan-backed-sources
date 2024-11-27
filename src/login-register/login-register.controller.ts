@@ -9,7 +9,6 @@ import {
   HttpException,
   HttpStatus,
   Inject,
-  Query,
 } from '@nestjs/common';
 import { LoginRegisterService } from './login-register.service';
 import {
@@ -51,12 +50,6 @@ export class LoginRegisterController {
     const { password } = body;
     try {
       if (result) {
-        console.log(
-          md5(password) === result.password,
-          password,
-          result.password,
-        );
-        console.log(result);
         if (md5(password) === result.password) {
           const token = await this.jwtService.signAsync({
             id: result._id,
@@ -118,14 +111,15 @@ export class LoginRegisterController {
    * 获取邮箱验证码
    * @param address
    */
-  @Get('register-code')
-  async generateRegisterCode(@Query() address: string) {
+  @Post('register-code')
+  async generateRegisterCode(@Body() body: { address: string }) {
     const code = Math.random().toString().slice(2, 8);
     try {
       //设置缓存
       await this.redisService.set(`verify_code`, code, 5 * 60);
+      console.log(this.emailService);
       await this.emailService.sendMail({
-        to: address,
+        to: body.address,
         subject: 'merikle网盘注册验证码',
         html: `<p>你的注册验证码是 ${code}</p>`,
       });

@@ -7,12 +7,12 @@ export class EmailSendService {
   transporter: Transporter;
   constructor(private configService: ConfigService) {
     this.transporter = createTransport({
-      host: this.configService.get('nodemailer_host'),
-      port: this.configService.get('nodemailer_port'),
+      host: 'smtp.qq.com',
+      port: 587,
       secure: false,
       auth: {
-        user: this.configService.get('nodemailer_auth_user'),
-        pass: this.configService.get('nodemailer_auth_pass'),
+        user: '3495314473@qq.com',
+        pass: 'jwcpfwcklvidcjea',
       },
     });
   }

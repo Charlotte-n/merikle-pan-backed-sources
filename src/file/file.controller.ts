@@ -18,6 +18,9 @@ import {
   DeleteFileorFolderDto,
   MultipleDeleteDto,
 } from './dto/delete-file.dto';
+import { UploadedCommonFile } from './dto/update-file.dto';
+import { diskStorage } from 'multer';
+import { extname } from 'path';
 
 @Controller('file')
 export class FileController {
@@ -70,6 +73,7 @@ export class FileController {
     @Query('filename') filename: string,
     @Query('file_type') file_type: string,
     @Query('filePid') filePid: string | number,
+    @Query('ext') ext: string,
   ) {
     const result = await this.fileService.verifyExit(
       fileSize,
@@ -79,8 +83,46 @@ export class FileController {
       filename,
       file_type,
       filePid,
+      ext,
     );
     return result;
+  }
+
+  @Post('upload/file')
+  @UseInterceptors(
+    FileInterceptor('file', {
+      storage: diskStorage({
+        destination: 'upload/',
+        filename: (req, file, callback) => {
+          // 从请求体中获取文件哈希值
+          const { hash } = req.query;
+
+          // 确保 fileInfo 是 JSON 格式并解析它
+          console.log(req.query);
+          const fileHash = hash;
+
+          // 使用哈希值作为文件名
+          const fileExtName = extname(file.originalname);
+          const newFilename = `${fileHash}${fileExtName}`;
+          callback(null, newFilename);
+        },
+      }),
+    }),
+  )
+  async uploadFile(
+    @UploadedFile() file: Express.Multer.File,
+    @Body() fileInfo: any,
+  ) {
+    const fileInfoCommon = JSON.parse(fileInfo.fileInfo) as UploadedCommonFile;
+    return await this.fileService.uploadFile({
+      fileHash: fileInfoCommon.fileHash,
+      filePid: fileInfoCommon.filePid,
+      fileType: fileInfoCommon.fileType,
+      fileSize: fileInfoCommon.fileSize,
+      filename: fileInfoCommon.filename,
+      userId: fileInfoCommon.userId,
+      originalname: file.originalname,
+    });
   }
 
   /**
@@ -137,7 +179,8 @@ export class FileController {
    */
   @Post('merge')
   mergeFile(@Body() body: mergeParam) {
-    const { fileHash, filename, fileSize, user_id, file_type, filePid } = body;
+    const { fileHash, filename, fileSize, user_id, file_type, filePid, ext } =
+      body;
     return this.fileService.mergeFile(
       fileHash,
       filename,
@@ -145,6 +188,7 @@ export class FileController {
       user_id,
       file_type,
       filePid,
+      ext,
     );
   }
 
