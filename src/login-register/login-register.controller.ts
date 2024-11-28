@@ -117,7 +117,6 @@ export class LoginRegisterController {
     try {
       //设置缓存
       await this.redisService.set(`verify_code`, code, 5 * 60);
-      console.log(this.emailService);
       await this.emailService.sendMail({
         to: body.address,
         subject: 'merikle网盘注册验证码',

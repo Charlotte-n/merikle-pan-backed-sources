@@ -11,11 +11,11 @@ import { ConfigService } from '@nestjs/config';
       async useFactory(configService: ConfigService) {
         const client = createClient({
           socket: {
-            host: '127.0.0.1',
+            host: 'merikle-pan-redis',
             port: 6379,
           },
           database: 1,
-          password: 'redis_EGpy5k',
+          // password: 'redis_EGpy5k',
         });
         await client.connect();
         return client;

@@ -7,6 +7,15 @@ services:
     env_file:
       - 1panel.env
       - .env.production
+  merikle-mongo-express:
+    depends_on:
+      - merikle-pan-mongo
+    image: mongo-express
+    container_name: merikle-pan-mongo-express
+    ports:
+      - 8889:8081
+    env_file:
+      - 1panel.env
 
   merikle-pan-redis:
     image: redis:6
