@@ -44,6 +44,7 @@
     "cookie-parser": "^1.4.6",
     "cz-customizable": "^7.0.0",
     "express-session": "^1.18.0",
+    "merikle-pan-backed": "link:",
     "moment": "^2.30.1",
     "mongodb": "5.8.0",
     "mongoose-sequence": "^6.0.1",

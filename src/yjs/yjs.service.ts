@@ -12,6 +12,7 @@ export class YjsService {
   private docs: Map<string, { doc: Y.Doc; awareness: Awareness }> = new Map();
 
   constructor(private configService: ConfigService) {
+    console.log(this.configService.get('MONGODB_URI'));
     this.mdb = new MongodbPersistence(this.configService.get('MONGODB_URI'), {
       flushSize: 1000,
       multipleCollections: false,
