@@ -19,6 +19,7 @@ async function bootstrap() {
   };
   const app = await NestFactory.create<NestExpressApplication>(AppModule, {
     httpsOptions,
+    cors: true,
   });
   app.enableCors({
     origin: 'https://mpanfont.merikle.top',
