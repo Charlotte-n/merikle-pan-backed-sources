@@ -3,7 +3,7 @@ RUN mkdir -p /usr/src/pan/app
 WORKDIR /usr/src/pan/app
 COPY package.json pnpm-lock.yaml /usr/src/pan/app
 RUN corepack enable
-RUN --mount=id=pnpm-store,target=/root/.pnpm-store \
+RUN pnpm set registry https://registry.npmmirror.com \
     pnpm install  
 COPY . /usr/src/pan/app
 RUN npm run build
