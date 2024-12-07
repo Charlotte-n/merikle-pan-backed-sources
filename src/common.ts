@@ -3,3 +3,4 @@ export interface ResponsePrams {
   data: string;
   message: string;
 }
+export class hello {}
