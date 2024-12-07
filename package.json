@@ -55,6 +55,7 @@
     "rxjs": "^7.8.1",
     "svg-captcha": "^1.4.0",
     "ws": "^8.16.0",
+    "xlsx": "^0.18.5",
     "y-mongodb-provider": "^0.2.0",
     "y-protocols": "^1.0.6",
     "y-websocket": "^2.0.2",

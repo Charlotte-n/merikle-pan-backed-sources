@@ -46,7 +46,7 @@ import { StorageModule } from './s3/adaptor.module';
         return {
           secret: 'merikle',
           signOptions: {
-            expiresIn: '60m', // 默认 30 分钟
+            expiresIn: '24h', //24h
           },
         };
       },

@@ -16,30 +16,46 @@ export class FileService {
   private User: Model<User>;
 
   getFileType(value: string) {
-    const category = [
-      'folder',
-      'video',
-      'audio',
-      'image',
-      'pdf',
-      'word',
-      'sheet',
-      'txt',
-      'code',
-      'zip',
-      'others',
-    ];
-    for (let i = 0; i < category.length; i++) {
-      if (!value) {
-        return 10;
-      }
-      if (value.includes(category[i])) {
-        return i;
-      }
-      if (value.includes('rar')) {
-        return 9;
+    const fileTypeMap = {
+      folder: ['folder'],
+      video: ['mp4', 'avi', 'wmv', 'mov', 'flv', 'rmvb', 'mkv'],
+      audio: ['mp3', 'wav', 'wma', 'ogg', 'flac'],
+      image: ['png', 'jpg', 'jpeg', 'gif', 'bmp'],
+      pdf: ['pdf', 'ppt', 'pptx'],
+      word: ['doc', 'docx'],
+      sheet: ['xls', 'xlsx', 'excel', 'et'],
+      txt: ['txt'],
+      code: [
+        'js',
+        'ts',
+        'java',
+        'py',
+        'c',
+        'cpp',
+        'go',
+        'php',
+        'html',
+        'css',
+        'json',
+        'yaml',
+        'yml',
+      ],
+      zip: ['zip', 'rar', '7z', 'tar', 'gz', 'bz2', 'xz'],
+      others: [''],
+    };
+
+    const arrayValue = value.split('.');
+    let result = 10;
+    if (arrayValue.length) {
+      const etc = arrayValue[arrayValue.length - 1];
+      for (let i = 0; i < Object.keys(fileTypeMap).length; i++) {
+        if (fileTypeMap[Object.keys(fileTypeMap)[i]].includes(etc)) {
+          result = i;
+          return i;
+        }
       }
     }
+    return result;
   }
   /**
    * 合并文件
@@ -578,16 +594,8 @@ export class FileService {
 
   async addFile(addFile: UploadedCommonFile) {
     try {
-      const {
-        fileHash,
-        fileSize,
-        filename,
-        fileType,
-        userId,
-        filePid,
-        originalname,
-        filePath,
-      } = addFile;
+      const { fileHash, fileSize, filename, userId, filePid, filePath } =
+        addFile;
       const res = await this.File.create({
         file_name: filename,
         file_path: filePath,
@@ -595,7 +603,7 @@ export class FileService {
         file_size: this.getDanWei(Number(fileSize)),
         file_md5: fileHash,
         create_time: new Date().getTime(),
-        file_type: this.getFileType(fileType),
+        file_type: this.getFileType(filename),
         folder_type: 0,
         user: userId,
         file_cover: filePath,

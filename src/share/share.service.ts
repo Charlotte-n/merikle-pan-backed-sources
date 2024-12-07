@@ -4,7 +4,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Share } from '../../libs/db/models/share.model';
 import { File } from '../../libs/db/models/file_info.model';
 import { CreateShareData } from './dto/create-share.dto';
-import { ObjectId } from 'mongodb';
+
 const randomString = (length) => {
   const str = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
   let result = '';
@@ -26,34 +26,23 @@ export class ShareService {
    */
   async createShareLink(body: CreateShareData) {
     const { fileId, userId, validTime } = body;
-    //进行查找数据库里是否有该数据
-    // const file = await this.Share.findOne({ file_id: fileId });
-    // if (file) {
-    //   await this.Share.updateOne(
-    //     { file_id: fileId },
-    //     {
-    //       code: body.code ? body.code : randomString(4),
-    //     },
-    //   );
-    // } else {
     if (body.code) {
       await this.Share.create({
         file_id: fileId,
         user_id: userId,
         valid_type: validTime,
         code: body.code,
-        file: new ObjectId(fileId),
+        file: fileId,
       });
     } else {
       await this.Share.create({
         file_id: fileId,
         user_id: userId,
         valid_type: validTime,
-        code: randomString(3),
-        file: new ObjectId(fileId),
+        code: randomString(4),
+        file: fileId,
       });
     }
-    // }
     const res = await this.Share.findOne({ file_id: fileId });
     const id = res._id;
     const code = res.code;
@@ -146,12 +135,13 @@ export class ShareService {
     }
   }
   //获取分享文件列表
-  async getShareList(fileId: string) {
+  async getShareList(userId: string) {
     try {
       const res = await this.File.find({
-        _id: fileId,
+        user: userId,
         del_flag: 0,
       });
+      console.log(res);
       const result = res.map((item) => {
         return {
           name: item.file_name,
