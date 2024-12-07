@@ -13,9 +13,10 @@ import * as path from 'path';
 async function bootstrap() {
   const homeDir = require('os').homedir();
   // 读取密钥文件
+  const baseDir = path.resolve(__dirname, '../opt');
   const httpsOptions = {
-    key: fs.readFileSync('/opt/server.key'),
-    cert: fs.readFileSync('/opt/server.cert'),
+    key: fs.readFileSync(path.join(baseDir, 'server.key')),
+    cert: fs.readFileSync(path.join(baseDir, 'server.cert')),
   };
   const app = await NestFactory.create<NestExpressApplication>(AppModule, {
     httpsOptions,
