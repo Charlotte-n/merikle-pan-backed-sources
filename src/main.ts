@@ -12,15 +12,10 @@ import * as path from 'path';
 
 async function bootstrap() {
   const homeDir = require('os').homedir();
-  // 定义证书和密钥文件的路径
-  const keyPath = '/opt/1panel/server.key';
-  const certPath = '/opt/1panel/server.cert';
   // 读取密钥文件
-  const key = fs.readFileSync(keyPath);
-  const cert = fs.readFileSync(certPath);
   const httpsOptions = {
-    key,
-    cert,
+    key: fs.readFileSync('/opt/server.key'),
+    cert: fs.readFileSync('/opt/server.cert'),
   };
   const app = await NestFactory.create<NestExpressApplication>(AppModule, {
     httpsOptions,
