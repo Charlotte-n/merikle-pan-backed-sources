@@ -11,7 +11,6 @@ import * as fs from 'fs';
 import * as path from 'path';
 
 async function bootstrap() {
-  const homeDir = require('os').homedir();
   // 读取密钥文件
   const baseDir = path.resolve(__dirname, '../opt');
   const httpsOptions = {
@@ -22,7 +21,7 @@ async function bootstrap() {
     httpsOptions,
   });
   app.enableCors({
-    origin: true,
+    origin: 'https://mpanfont.merikle.top',
     methods: 'GET,PUT,POST,PATCH,DELETE',
     allowedHeaders: 'Content-Type,Authorization',
     exposedHeaders: 'Content-Range,X-Content-Range',
