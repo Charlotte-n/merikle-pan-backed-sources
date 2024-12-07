@@ -22,6 +22,7 @@ import { RecycleModule } from './recycle/recycle.module';
 import { CommonFileModule } from './common-file/common-file.module';
 import { YjsModule } from './yjs/yjs.module';
 import { ExcelModule } from './excel/excel.module';
+import { StorageModule } from './s3/adaptor.module';
 
 @Module({
   imports: [
@@ -34,8 +35,9 @@ import { ExcelModule } from './excel/excel.module';
     //配置.env
     ConfigModule.forRoot({
       isGlobal: true,
-      envFilePath: ['.development.env', '.production.env'],
+      envFilePath: ['.env.development', '.env.production', '1panel.env'],
     }),
+    StorageModule,
     //配置JWT
     JwtModule.registerAsync({
       global: true,

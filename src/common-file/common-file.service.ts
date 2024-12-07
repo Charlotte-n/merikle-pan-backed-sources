@@ -14,8 +14,7 @@ export class CommonFileService {
   @InjectModel(CommonFile.name)
   private readonly ConFile: Model<CommonFile>;
   async uploadFileContent(body: CreateCommonFileType) {
-    const { userId, content, category } = body;
-    console.log(userId);
+    const { userId, category } = body;
     try {
       await this.ConFile.create({
         isPrivate: false,

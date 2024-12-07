@@ -4,7 +4,7 @@ import { File } from '../../libs/db/models/file_info.model';
 import { Model } from 'mongoose';
 import fs from 'fs';
 import { User } from '../../libs/db/models/user.model';
-import { UploadedCommonFile } from './dto/update-file.dto';
+import { UploadedCommonFile, UploadFileDto } from './dto/update-file.dto';
 import { extname } from 'path';
 
 @Injectable()
@@ -145,7 +145,6 @@ export class FileService {
   ) {
     const dirPath = 'upload/chunks' + '_' + fileHash; //存放的chunk的目录
     const filePath = 'upload' + '/' + fileHash + '.' + ext; //存放chunk的地址,这个filename前端要进行修改生成有hash值且有索引的名字
-    console.log(filePath);
     const reg = /(.+)\-\d+$/;
     const name = filename.match(reg) ? filename.match(reg)?.[1] : filename;
     //判断文件的大小
@@ -232,6 +231,33 @@ export class FileService {
       message: message,
       code: code, //0为秒传，1为上传成功，2为
     };
+  }
+
+  //查看数据库里面有没有数据有的话实现秒传
+  async isExistFile(hash: string, userId: string) {
+    try {
+      const res = await this.File.findOne({ user: userId, file_md5: hash });
+      return res
+        ? {
+            code: 0,
+            data: {
+              isExit: true,
+            },
+            msg: '成功',
+          }
+        : {
+            code: 0,
+            data: {
+              isExit: false,
+            },
+            msg: '成功',
+          };
+    } catch (err) {
+      return {
+        code: -1,
+        msg: err,
+      };
+    }
   }
 
   /**
@@ -321,7 +347,7 @@ export class FileService {
         //判断是否有title
         if (title) {
           res = await this.File.find({
-            del_flag: 0,
+            del_flag: 0, //0是未删除
             file_pid: fileId,
             file_name: { $regex: title, $options: 'i' },
           })
@@ -550,11 +576,50 @@ export class FileService {
     }
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} file`;
-  }
+  async addFile(addFile: UploadedCommonFile) {
+    try {
+      const {
+        fileHash,
+        fileSize,
+        filename,
+        fileType,
+        userId,
+        filePid,
+        originalname,
+        filePath,
+      } = addFile;
+      const res = await this.File.create({
+        file_name: filename,
+        file_path: filePath,
+        file_id: fileHash + new Date().getSeconds(),
+        file_size: this.getDanWei(Number(fileSize)),
+        file_md5: fileHash,
+        create_time: new Date().getTime(),
+        file_type: this.getFileType(fileType),
+        folder_type: 0,
+        user: userId,
+        file_cover: filePath,
+        del_flag: 0,
+        file_pid: filePid,
+      });
+      //获取用户的space
+      let useSpace = await this.getUseSpace(userId);
+      useSpace = useSpace ? useSpace : 0;
+      //更新数据
+      await this.User.updateOne(
+        { _id: userId },
+        { useSpace: useSpace + this.getDanWei(Number(fileSize)) },
+      );
 
-  remove(id: number) {
-    return `This action removes a #${id} file`;
+      return {
+        message: '上传成功',
+        code: 0,
+      };
+    } catch (err) {
+      return {
+        message: '失败',
+        code: -1,
+      };
+    }
   }
 }

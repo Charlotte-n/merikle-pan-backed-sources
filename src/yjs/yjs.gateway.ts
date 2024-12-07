@@ -6,7 +6,6 @@ export class YjsGateway {
   constructor(private yjsService: YjsService) {}
 
   handleConnection(client: any, ...args: any[]) {
-    console.log('client', client);
     const [req] = args;
     if (req.url) {
       const [docName, userName] = req.url.slice(1).split('/');

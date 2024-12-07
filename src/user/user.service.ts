@@ -85,7 +85,6 @@ export class UserService {
       { _id: userId },
       { qq_avatar: avatar },
     );
-    console.log(res);
     return res;
   }
 }

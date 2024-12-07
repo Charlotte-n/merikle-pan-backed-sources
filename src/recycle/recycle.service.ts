@@ -2,8 +2,6 @@ import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { File } from '../../libs/db/models/file_info.model';
-import { ObjectId } from 'mongodb';
-
 @Injectable()
 export class RecycleService {
   @InjectModel(File.name)

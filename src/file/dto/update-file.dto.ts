@@ -17,4 +17,5 @@ export interface UploadedCommonFile {
   userId: string;
   filePid: number;
   originalname: string;
+  filePath: string;
 }

@@ -2,8 +2,6 @@ import {
   Controller,
   Get,
   Post,
-  Param,
-  Delete,
   UseInterceptors,
   UploadedFile,
   Query,
@@ -88,6 +86,15 @@ export class FileController {
     return result;
   }
 
+  @Get('/isExitFile')
+  async isExistFile(
+    @Query('hash') hash: string,
+    @Query('userId') userId: string,
+  ) {
+    const result = await this.fileService.isExistFile(hash, userId);
+    return result;
+  }
+
   @Post('upload/file')
   @UseInterceptors(
     FileInterceptor('file', {
@@ -98,7 +105,6 @@ export class FileController {
           const { hash } = req.query;
 
           // 确保 fileInfo 是 JSON 格式并解析它
-          console.log(req.query);
           const fileHash = hash;
 
           // 使用哈希值作为文件名
@@ -122,6 +128,7 @@ export class FileController {
       filename: fileInfoCommon.filename,
       userId: fileInfoCommon.userId,
       originalname: file.originalname,
+      filePath: fileInfoCommon.filePath,
     });
   }
 
@@ -224,13 +231,9 @@ export class FileController {
     return await this.fileService.findFileInfo(id);
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.fileService.findOne(+id);
-  }
-
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.fileService.remove(+id);
+  //添加文件信息
+  @Post('addFile')
+  async addFile(@Body() addFileBody: UploadedCommonFile) {
+    return await this.fileService.addFile(addFileBody);
   }
 }

@@ -77,19 +77,18 @@ export class ShareService {
     const file = await this.Share.find({ user_id: userId })
       .populate('file')
       .exec();
-    //进行数据处理
     const response = file.map((item) => {
       return {
-        id: item._id,
-        code: item.code,
-        validTime: item.valid_type,
-        folderType: (item.file as any).folder_type,
-        fileType: (item.file as any).file_type,
-        createTime: (item.file as any).create_time,
+        id: item?._id,
+        code: item?.code,
+        validTime: item?.valid_type,
+        folderType: (item.file as any)?.folder_type || 0,
+        fileType: (item.file as any)?.file_type,
+        createTime: (item.file as any)?.create_time,
         viewCount: item.show_count ? item.show_count : 0,
-        fileName: (item.file as any).file_name,
-        filePath: (item.file as any).file_cover,
-        fileId: item.file_id,
+        fileName: (item.file as any)?.file_name,
+        filePath: (item.file as any)?.file_cover,
+        fileId: item?.file_id,
       };
     });
 

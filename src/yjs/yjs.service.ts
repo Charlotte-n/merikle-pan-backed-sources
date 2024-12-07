@@ -1,10 +1,9 @@
 import { Injectable } from '@nestjs/common';
-import { CreateYjDto } from './dto/create-yj.dto';
-import { UpdateYjDto } from './dto/update-yj.dto';
 import { MongodbPersistence } from 'y-mongodb-provider';
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const { setupWSConnection, setPersistence } = require('y-websocket/bin/utils');
 import { Awareness } from 'y-protocols/awareness';
+import { ConfigService } from '@nestjs/config';
 import * as Y from 'yjs';
 
 @Injectable()
@@ -12,14 +11,11 @@ export class YjsService {
   private mdb: MongodbPersistence;
   private docs: Map<string, { doc: Y.Doc; awareness: Awareness }> = new Map();
 
-  constructor() {
-    this.mdb = new MongodbPersistence(
-      'mongodb://mongo_eEptY5:mongo_M7dAPh@localhost:27017/pan?authSource=admin',
-      {
-        flushSize: 1000,
-        multipleCollections: false,
-      },
-    );
+  constructor(private configService: ConfigService) {
+    this.mdb = new MongodbPersistence(this.configService.get('MONGODB_URI'), {
+      flushSize: 1000,
+      multipleCollections: false,
+    });
 
     setPersistence({
       bindState: async (docName, ydoc) => {
@@ -50,30 +46,11 @@ export class YjsService {
   }
 
   async compressDocumentUpdates(docName: string) {
+    console.log(docName);
     // 实现压缩逻辑
   }
 
   async compressAllDocuments() {
     // 实现所有文档压缩逻辑
-  }
-
-  create(createYjDto: CreateYjDto) {
-    return 'This action adds a new yj';
-  }
-
-  findAll() {
-    return `This action returns all yjs`;
-  }
-
-  findOne(id: number) {
-    return `This action returns a #${id} yj`;
-  }
-
-  update(id: number, updateYjDto: UpdateYjDto) {
-    return `This action updates a #${id} yj`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} yj`;
   }
 }

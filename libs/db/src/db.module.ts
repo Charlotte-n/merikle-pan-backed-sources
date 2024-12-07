@@ -20,9 +20,7 @@ const models = MongooseModule.forFeature([
     MongooseModule.forRootAsync({
       imports: [ConfigModule],
       useFactory: async (configService: ConfigService) => ({
-        uri: 'mongodb://merikle-pan-mongo:27017/pan?authSource=admin',
-        // pass: 'mongo_M7dAPh',
-        // user: 'mongo_eEptY5',
+        uri: configService.get('MONGODB_URI'),
       }),
       inject: [ConfigService],
     }),

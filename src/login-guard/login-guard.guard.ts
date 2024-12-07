@@ -25,11 +25,12 @@ export class LoginGuardGuard implements CanActivate {
       '/lr/register-code',
       '/lr/verifyCode',
       '/lr/:id',
+      '/share/getShare',
+      '/share/getShareList',
     ];
     //简单的检验了下token
     const request = context.switchToHttp().getRequest();
     const path = context.switchToHttp().getRequest().route.path;
-    console.log(path);
     if (whiteList.includes(path)) {
       return true;
     }
@@ -44,7 +45,6 @@ export class LoginGuardGuard implements CanActivate {
       const info: any = this.jwtService.verify(token);
       (request as any).user = info.userId;
     } catch (e) {
-      console.log(123);
       throw new UnauthorizedException('失效了');
     }
     return true;

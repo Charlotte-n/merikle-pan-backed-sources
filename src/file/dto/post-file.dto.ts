@@ -32,3 +32,11 @@ export class mergeParam {
   filePid: string | number;
   ext: string;
 }
+
+export class AddFile {
+  filename: string;
+  hash: string;
+  fileId: string;
+  parentId: string;
+  url: string;
+}

@@ -40,6 +40,7 @@ export class LoginRegisterService {
   async register(body: PostRegistervType) {
     const { email, nick_name, password } = body;
     try {
+      console.log(email, nick_name);
       if (email && nick_name && password) {
         await this.User.create({
           email,
@@ -47,7 +48,8 @@ export class LoginRegisterService {
           password: md5(password),
           qq_open_id: 0,
           create_time: new Date(),
-          totalSpace: 10,
+          totalSpace: 20,
+          useSpace: 0,
         });
         return {
           data: '',
