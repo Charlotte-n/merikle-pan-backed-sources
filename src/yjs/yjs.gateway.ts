@@ -8,7 +8,7 @@ export class YjsGateway {
   handleConnection(client: any, ...args: any[]) {
     const [req] = args;
     if (req.url) {
-      const [docName, userName] = req.url.slice(1).split('/');
+      const [docName, userName] = req.url.slice(1).split('&&');
       this.yjsService.setupWSConnection(client, req, {
         docName,
         parameters: { userName },
