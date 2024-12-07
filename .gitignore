@@ -57,8 +57,11 @@ report.[0-9]*.[0-9]*.[0-9]*.[0-9]*.json
 
 /public
 
+
+#env
 .env
 .env.development
 .env.production
+.git
 
 
