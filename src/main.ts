@@ -21,7 +21,7 @@ async function bootstrap() {
     httpsOptions,
   });
   app.enableCors({
-    origin: '*',
+    origin: 'https://mpanfont.merikle.top',
     methods: 'GET,PUT,POST,PATCH,DELETE',
     allowedHeaders: 'Content-Type,Authorization',
     exposedHeaders: 'Content-Range,X-Content-Range',
