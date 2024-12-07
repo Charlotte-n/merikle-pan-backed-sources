@@ -8,6 +8,7 @@ export class StorageService {
     this.adapter = adapter;
   }
   async getSignature(id: string) {
+    console.log(id);
     return await this.adapter.getSignature(id);
   }
 
