@@ -16,8 +16,8 @@ async function bootstrap() {
   const keyPath = '/opt/1panel/server.key';
   const certPath = '/opt/1panel/server.cert';
   // 读取密钥文件
-  const key = fs.readFileSync(keyPath, 'utf8');
-  const cert = fs.readFileSync(certPath, 'utf-8');
+  const key = fs.readFileSync(keyPath);
+  const cert = fs.readFileSync(certPath);
   const httpsOptions = {
     key,
     cert,
