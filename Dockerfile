@@ -5,8 +5,8 @@ COPY package.json pnpm-lock.yaml /usr/src/pan/app
 RUN corepack enable
 RUN --mount=type=cache,id=pnpm-store,target=/root/.pnpm-store \
     pnpm set registry https://registry.npmmirror.com \
-    pnpm install  
+    pnpm install --frozen-lockfile 
 COPY . /usr/src/pan/app
-RUN pnpm run build
+RUN npm run build
 EXPOSE 7005
-CMD pnpm run start:prod
+CMD npm run start:prod
