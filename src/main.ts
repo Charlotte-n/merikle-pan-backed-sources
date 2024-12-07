@@ -19,15 +19,14 @@ async function bootstrap() {
   };
   const app = await NestFactory.create<NestExpressApplication>(AppModule, {
     httpsOptions,
-    cors: true,
   });
   app.enableCors({
-    origin: 'https://mpanfont.merikle.top',
+    origin: '*',
     methods: 'GET,PUT,POST,PATCH,DELETE',
     allowedHeaders: 'Content-Type,Authorization',
     exposedHeaders: 'Content-Range,X-Content-Range',
     credentials: true,
-    maxAge: 3600,
+    maxAge: 3800,
   });
   const config = new DocumentBuilder()
     .setTitle('Cats example')
