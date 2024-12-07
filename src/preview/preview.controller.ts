@@ -10,7 +10,10 @@ export class PreviewController {
 
   //获取文件流
   @Post()
-  async getFile(@Body() obj, @Res({ passthrough: true }) res: Response): any {
+  async getFile(
+    @Body() obj,
+    @Res({ passthrough: true }) res: Response,
+  ): Promise<any> {
     set_fs(await import('fs')); //
     const file = readFile(obj.path);
     res.set({
