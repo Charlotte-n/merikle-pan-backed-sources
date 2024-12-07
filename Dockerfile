@@ -6,6 +6,6 @@ RUN corepack enable
 RUN pnpm set registry https://registry.npmmirror.com \
     pnpm install  
 COPY . /usr/src/pan/app
-RUN npm run build
+RUN pnpm run build
 EXPOSE 7005
 CMD npm run start:prod
