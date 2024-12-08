@@ -12,17 +12,17 @@ import * as path from 'path';
 
 async function bootstrap() {
   // 读取密钥文件
-  // const baseDir = path.resolve(__dirname, '../opt');
-  // const httpsOptions = {
-  //   key: fs.readFileSync(path.join(baseDir, 'server.key')),
-  //   cert: fs.readFileSync(path.join(baseDir, 'server.cert')),
-  // };
+  const baseDir = path.resolve(__dirname, '../opt');
+  const httpsOptions = {
+    key: fs.readFileSync(path.join(baseDir, 'server.key')),
+    cert: fs.readFileSync(path.join(baseDir, 'server.cert')),
+  };
   const app = await NestFactory.create<NestExpressApplication>(AppModule, {
-    // httpsOptions,
+    httpsOptions,
   });
   app.enableCors({
-    // origin: 'https://mpanfont.merikle.top',
-    origin: 'http://localhost:4000',
+    origin: 'https://mpanfont.merikle.top',
+    // origin: 'http://localhost:4000',
     methods: 'GET,PUT,POST,PATCH,DELETE',
     allowedHeaders: 'Content-Type,Authorization',
     exposedHeaders: 'Content-Range,X-Content-Range',
