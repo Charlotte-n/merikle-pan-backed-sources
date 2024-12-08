@@ -1,4 +1,4 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable, Res } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { File } from '../../libs/db/models/file_info.model';
 import { Model } from 'mongoose';
@@ -383,7 +383,7 @@ export class FileService {
         };
       }
       //根据文件的类型来进行查找相关的文件
-      if (fileType >= 0) {
+      if (fileType >= 0 && fileType !== null && fileType !== undefined) {
         let res;
         if (title) {
           res = await this.File.find({
@@ -519,7 +519,7 @@ export class FileService {
         file_pid: filePid,
         create_time: new Date().getTime(),
         folder_type: 1,
-        user: await this.getUserId(user_id),
+        user: user_id,
         del_flag: 0,
       });
       return {
