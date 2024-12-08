@@ -148,4 +148,29 @@ export class CommonFileService {
       throw new HttpException(e, HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
+
+  /**
+   * 获取共享文件信息
+   * @param fileId
+   * @returns
+   */
+  async getFileInfo(fileId: string) {
+    try {
+      const res = await this.ConFile.findOne({ _id: fileId });
+      if (res) {
+        return {
+          code: 0,
+          data: res,
+          msg: '获取成功',
+        };
+      }
+      return {
+        code: -1,
+        data: '',
+        msg: '获取失败',
+      };
+    } catch (err) {
+      throw new HttpException(err, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+  }
 }

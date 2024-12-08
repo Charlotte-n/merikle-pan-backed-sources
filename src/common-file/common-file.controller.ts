@@ -1,12 +1,9 @@
-import { Body, Controller, Get, Param, Post, Put, Query } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, Query } from '@nestjs/common';
 import { CommonFileService } from './common-file.service';
 import { CreateCommonFileDto } from './dto/create-common-file.dto';
 import { UpdateCommonFileDto } from './dto/update-common-file.dto';
 import { UpdateCommonFileNameDto } from './dto/update-common-file-name.dto';
-import {
-  UpdateCommonFilePrivialDto,
-  UpdateCommonFilePrivialType,
-} from './dto/update-common-file-privial.dto';
+import { UpdateCommonFilePrivialDto } from './dto/update-common-file-privial.dto';
 
 @Controller('commonFile')
 export class CommonFileController {
@@ -41,5 +38,10 @@ export class CommonFileController {
   @Post('/updateFilePrivial')
   async updateFilePrivial(@Body() body: UpdateCommonFilePrivialDto) {
     return await this.commonFileService.updateFilePrivial(body);
+  }
+
+  @Get('/getFileInfo')
+  async getFileInfo(@Query('fileId') fileId: string) {
+    return await this.commonFileService.getFileInfo(fileId);
   }
 }

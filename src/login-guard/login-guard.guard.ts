@@ -27,6 +27,7 @@ export class LoginGuardGuard implements CanActivate {
       '/lr/:id',
       '/share/getShare',
       '/share/getShareList',
+      '/commonFile/getFileInfo',
     ];
     //简单的检验了下token
     const request = context.switchToHttp().getRequest();

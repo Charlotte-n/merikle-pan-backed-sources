@@ -253,7 +253,11 @@ export class FileService {
   //查看数据库里面有没有数据有的话实现秒传
   async isExistFile(hash: string, userId: string) {
     try {
-      const res = await this.File.findOne({ user: userId, file_md5: hash });
+      const res = await this.File.findOne({
+        user: userId,
+        file_md5: hash,
+        del_flag: 0,
+      });
       return res
         ? {
             code: 0,
