@@ -6,6 +6,7 @@ import fs from 'fs';
 import { User } from '../../libs/db/models/user.model';
 import { UploadedCommonFile, UploadFileDto } from './dto/update-file.dto';
 import { extname } from 'path';
+import { GetFileListBody } from './dto/get-file.dto';
 
 @Injectable()
 export class FileService {
@@ -348,13 +349,9 @@ export class FileService {
    * @param fileId
    * @param title
    */
-  async findAll(
-    value: { page: number; pageSize: number },
-    fileType: number,
-    fileId: string,
-    title?: string,
-  ) {
-    const { page, pageSize } = value;
+  async findAll(body: GetFileListBody) {
+    const { pagation, fileId, fileType, userId, title } = body;
+    const { page, pageSize } = pagation;
     //进行文件查询
     try {
       //判断是否有fileId:此时获取的是文件夹里面的内容
@@ -366,11 +363,16 @@ export class FileService {
             del_flag: 0, //0是未删除
             file_pid: fileId,
             file_name: { $regex: title, $options: 'i' },
+            user: userId,
           })
             .skip((page - 1) * pageSize)
             .limit(pageSize);
         } else {
-          res = await this.File.find({ del_flag: 0, file_pid: fileId })
+          res = await this.File.find({
+            del_flag: 0,
+            file_pid: fileId,
+            user: userId,
+          })
             .skip((page - 1) * pageSize)
             .limit(pageSize);
         }
@@ -388,6 +390,7 @@ export class FileService {
             del_flag: 0,
             file_type: fileType,
             file_name: { $regex: title, $options: 'i' },
+            user: userId,
           })
             .skip((page - 1) * pageSize)
             .limit(pageSize);
@@ -395,6 +398,7 @@ export class FileService {
           res = await this.File.find({
             del_flag: 0,
             file_type: fileType,
+            user: userId,
           })
             .skip((page - 1) * pageSize)
             .limit(pageSize);
@@ -405,7 +409,7 @@ export class FileService {
           code: 0,
         };
       } else {
-        const res = await this.File.find({ del_flag: 0 })
+        const res = await this.File.find({ del_flag: 0, user: userId })
           .skip((page - 1) * pageSize)
           .limit(pageSize);
         return {

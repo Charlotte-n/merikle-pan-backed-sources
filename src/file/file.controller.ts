@@ -19,6 +19,7 @@ import {
 import { UploadedCommonFile } from './dto/update-file.dto';
 import { diskStorage } from 'multer';
 import { extname } from 'path';
+import { GetFileListBody } from './dto/get-file.dto';
 
 @Controller('file')
 export class FileController {
@@ -211,15 +212,10 @@ export class FileController {
   /**
    * 获取文件列表
    */
-  @Get('list')
-  async findAll(
-    @Pagation() pagation: { page: number; pageSize: number },
-    @Query('fileType') fileType: number,
-    @Query('fileId') fileId: string,
-    @Query('title') title?: string,
-  ) {
-    //进行分页查询x
-    return await this.fileService.findAll(pagation, fileType, fileId, title);
+  @Post('list')
+  async findAll(@Body() body: GetFileListBody) {
+    //进行分页查询
+    return await this.fileService.findAll(body);
   }
 
   /**
