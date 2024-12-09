@@ -1,5 +1,6 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
+import { Interval } from '@nestjs/schedule';
 import { Model } from 'mongoose';
 import { File } from '../../libs/db/models/file_info.model';
 @Injectable()
@@ -46,7 +47,7 @@ export class RecycleService {
     try {
       for (const id of ids) {
         await this.File.deleteOne({ _id: id });
-        //更新用户空间
+        //TODO:更新用户空间
       }
 
       return {
@@ -74,5 +75,15 @@ export class RecycleService {
     } catch (e) {
       throw new HttpException(e, HttpStatus.INTERNAL_SERVER_ERROR);
     }
+  }
+  /**
+   * 定时删除数据库数据
+   */
+  @Interval(864000000) // 10天的毫秒数 (10 * 24 * 60 * 60 * 1000)
+  async handleInterval() {
+    await this.File.deleteMany({
+      del_flag: 1,
+    });
+    console.log('10天前的数据已被删除');
   }
 }
