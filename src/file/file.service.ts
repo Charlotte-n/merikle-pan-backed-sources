@@ -356,7 +356,7 @@ export class FileService {
     //进行文件查询
     try {
       //判断是否有fileId:此时获取的是文件夹里面的内容
-      if (fileId) {
+      if (fileId === 0 || fileId === '0' || fileId) {
         let res;
         //判断是否有title
         if (title) {
