@@ -562,18 +562,19 @@ export class FileService {
         { del_flag: 1, del_time: time },
       );
       const fileInfo = await this.File.findOne({ _id: fileId });
-      let useSpace = await this.getUseSpace(req.user._id);
+      let useSpace = await this.getUseSpace(req.user.id);
       useSpace = useSpace
         ? fileInfo.file_size
           ? useSpace - fileInfo.file_size
           : useSpace
         : 0;
-      await this.User.updateOne({ _id: req.user._id }, { useSpace: useSpace });
+      await this.User.updateOne({ _id: req.user.id }, { useSpace: useSpace });
       return {
         message: '删除成功',
         code: 0,
       };
     } catch (e) {
+      console.log(e);
       new HttpException('删除成功', HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
@@ -592,16 +593,13 @@ export class FileService {
           { del_flag: 1, del_time: time },
         );
         const fileInfo = await this.File.findOne({ _id: item });
-        let useSpace = await this.getUseSpace(req.user._id);
+        let useSpace = await this.getUseSpace(req.user.id);
         useSpace = useSpace
           ? fileInfo.file_size
             ? useSpace - fileInfo.file_size
             : useSpace
           : 0;
-        await this.User.updateOne(
-          { _id: req.user._id },
-          { useSpace: useSpace },
-        );
+        await this.User.updateOne({ _id: req.user.id }, { useSpace: useSpace });
       }
       return {
         message: '删除成功',

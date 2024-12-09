@@ -44,7 +44,7 @@ export class LoginGuardGuard implements CanActivate {
     // 验证token
     try {
       const info: any = this.jwtService.verify(token);
-      (request as any).user = info.userId;
+      (request as any).user = info;
     } catch (e) {
       throw new UnauthorizedException('失效了');
     }
