@@ -6,9 +6,9 @@ import {
   UploadedFile,
   Query,
   Body,
+  Request,
 } from '@nestjs/common';
 import { FileService } from './file.service';
-import { Pagation } from '../pagation/pagation.decorator';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { AddFileOrFolderDto, mergeParam } from './dto/post-file.dto';
 import { RenameFileDto } from './dto/rename-file.dto';
@@ -155,9 +155,9 @@ export class FileController {
    * @param body
    */
   @Post('deleteFolder')
-  async deleteFolder(@Body() body: DeleteFileorFolderDto) {
+  async deleteFolder(@Body() body: DeleteFileorFolderDto, @Request() req: any) {
     const { fileId, time } = body;
-    return await this.fileService.deleteFolder(fileId, time);
+    return await this.fileService.deleteFolder(fileId, time, req);
   }
 
   /**
@@ -165,9 +165,9 @@ export class FileController {
    * @param body
    */
   @Post('multipleDelete')
-  async multipleDelete(@Body() body: MultipleDeleteDto) {
+  async multipleDelete(@Body() body: MultipleDeleteDto, @Request() req: any) {
     const { ids, time } = body;
-    return await this.fileService.multipleDelete(ids, time);
+    return await this.fileService.multipleDelete(ids, time, req);
   }
 
   /**

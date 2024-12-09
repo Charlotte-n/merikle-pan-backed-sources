@@ -1,7 +1,7 @@
 export class GetFileListBody {
   pagation: { page: number; pageSize: number };
   fileType: number;
-  fileId: string;
+  fileId: string | number;
   title?: string;
   userId: string;
 }

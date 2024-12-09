@@ -4,7 +4,7 @@ import { File } from '../../libs/db/models/file_info.model';
 import { Model } from 'mongoose';
 import fs from 'fs';
 import { User } from '../../libs/db/models/user.model';
-import { UploadedCommonFile, UploadFileDto } from './dto/update-file.dto';
+import { UploadedCommonFile } from './dto/update-file.dto';
 import { extname } from 'path';
 import { GetFileListBody } from './dto/get-file.dto';
 
@@ -160,7 +160,7 @@ export class FileService {
     const dirPath = 'upload/chunks' + '_' + fileHash; //存放的chunk的目录
     const filePath = 'upload' + '/' + fileHash + '.' + ext; //存放chunk的地址,这个filename前端要进行修改生成有hash值且有索引的名字
     const reg = /(.+)\-\d+$/;
-    const name = filename.match(reg) ? filename.match(reg)?.[1] : filename;
+    filename.match(reg) ? filename.match(reg)?.[1] : filename;
     //判断文件的大小
     const user = await this.User.findOne({
       _id: user_id,
@@ -553,7 +553,7 @@ export class FileService {
    * @param filename
    * @param user_id
    */
-  async deleteFolder(fileId: string, time: string, @Request() req: any) {
+  async deleteFolder(fileId: string, time: string, req: any) {
     try {
       await this.File.updateOne(
         {
@@ -617,7 +617,7 @@ export class FileService {
     try {
       const { fileHash, fileSize, filename, userId, filePid, filePath } =
         addFile;
-      const res = await this.File.create({
+      await this.File.create({
         file_name: filename,
         file_path: filePath,
         file_id: fileHash + new Date().getSeconds(),
