@@ -1,6 +1,5 @@
 import { Body, Controller, Get, Post, Query } from '@nestjs/common';
 import { RecycleService } from './recycle.service';
-import { DeleteFileorFolderDto } from '../file/dto/delete-file.dto';
 import { DeleteRecycleDto } from './dto/delete-recycle.dto';
 import { RevertRecycleDto } from './dto/revert-recycle.dto';
 

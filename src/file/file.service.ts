@@ -1,4 +1,4 @@
-import { HttpException, HttpStatus, Injectable, Res } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable, Request } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { File } from '../../libs/db/models/file_info.model';
 import { Model } from 'mongoose';
@@ -109,10 +109,7 @@ export class FileService {
       let useSpace = await this.getUseSpace(user_id);
       useSpace = useSpace ? useSpace : 0;
       //更新数据
-      await this.User.updateOne(
-        { _id: user_id },
-        { useSpace: useSpace + this.getDanWei(Number(fileSize)) },
-      );
+      await this.User.updateOne({ _id: user_id }, { useSpace: useSpace });
     } catch (e) {
       return {
         message: '已经创建了该文件不能重复创建',
@@ -556,7 +553,7 @@ export class FileService {
    * @param filename
    * @param user_id
    */
-  async deleteFolder(fileId: string, time: string) {
+  async deleteFolder(fileId: string, time: string, @Request() req: any) {
     try {
       await this.File.updateOne(
         {
@@ -564,8 +561,14 @@ export class FileService {
         },
         { del_flag: 1, del_time: time },
       );
-      //更新space
-
+      const fileInfo = await this.File.findOne({ _id: fileId });
+      let useSpace = await this.getUseSpace(req.user._id);
+      useSpace = useSpace
+        ? fileInfo.file_size
+          ? useSpace - fileInfo.file_size
+          : useSpace
+        : 0;
+      await this.User.updateOne({ _id: req.user._id }, { useSpace: useSpace });
       return {
         message: '删除成功',
         code: 0,
@@ -580,7 +583,7 @@ export class FileService {
    * @param ids
    * @param time
    */
-  async multipleDelete(ids: string[], time: string) {
+  async multipleDelete(ids: string[], time: string, @Request() req: any) {
     try {
       //of得到value，in得到key
       for (const item of ids) {
@@ -588,8 +591,18 @@ export class FileService {
           { _id: item },
           { del_flag: 1, del_time: time },
         );
+        const fileInfo = await this.File.findOne({ _id: item });
+        let useSpace = await this.getUseSpace(req.user._id);
+        useSpace = useSpace
+          ? fileInfo.file_size
+            ? useSpace - fileInfo.file_size
+            : useSpace
+          : 0;
+        await this.User.updateOne(
+          { _id: req.user._id },
+          { useSpace: useSpace },
+        );
       }
-      //更新useSpace
       return {
         message: '删除成功',
         code: 0,
