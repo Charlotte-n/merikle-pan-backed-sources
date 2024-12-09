@@ -22,7 +22,7 @@ async function bootstrap() {
   });
   app.enableCors({
     origin: 'https://mpanfont.merikle.top',
-    // origin: 'http://localhost:4000',
+    // origin: 'http://localhost:5173',
     methods: 'GET,PUT,POST,PATCH,DELETE',
     allowedHeaders: 'Content-Type,Authorization',
     exposedHeaders: 'Content-Range,X-Content-Range',

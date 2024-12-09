@@ -1,7 +1,7 @@
 import { WebSocketGateway } from '@nestjs/websockets';
 import { YjsService } from './yjs.service';
 
-@WebSocketGateway(1234)
+@WebSocketGateway()
 export class YjsGateway {
   constructor(private yjsService: YjsService) {}
 
